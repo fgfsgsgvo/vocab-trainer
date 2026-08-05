@@ -24,41 +24,22 @@ body{
 }
 button{cursor:pointer; font-family:inherit;}
 
-/* ===== LAYOUT ===== */
 .app{max-width:780px;margin:0 auto;padding:16px;}
-
-/* Header */
-.app-header{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:8px 0 16px;flex-wrap:wrap;
-}
+.app-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 16px;flex-wrap:wrap;}
 .app-header h1{font-size:1.3rem;font-weight:700;white-space:nowrap;}
 .header-right{display:flex;gap:8px;align-items:center;}
-.theme-btn{
-  width:36px;height:36px;border-radius:50%;border:2px solid var(--border);
-  background:var(--surface);font-size:1rem;display:flex;align-items:center;
-  justify-content:center;transition:.2s;
-}
+.theme-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--border);background:var(--surface);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:.2s;}
 .theme-btn:hover{border-color:var(--accent);}
 
-/* Breadcrumb */
 .breadcrumb{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--text2);margin-bottom:16px;flex-wrap:wrap;}
 .breadcrumb a{color:var(--accent);text-decoration:none;cursor:pointer;font-weight:500;}
 .breadcrumb a:hover{text-decoration:underline;}
 .breadcrumb span{opacity:.6;}
 
-/* ===== CARDS / PANELS ===== */
-.card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:24px;box-shadow:var(--shadow);margin-bottom:16px;
-}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:16px;}
 .card h2{font-size:1.1rem;margin-bottom:12px;}
 
-/* ===== BUTTONS ===== */
-.btn{
-  padding:9px 20px;border-radius:22px;border:none;font-size:.9rem;font-weight:600;
-  transition:all .2s;display:inline-flex;align-items:center;gap:6px;
-}
+.btn{padding:9px 20px;border-radius:22px;border:none;font-size:.9rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
 .btn-primary{background:var(--accent);color:#fff;}
 .btn-primary:hover{opacity:.9;transform:translateY(-1px);}
 .btn-outline{background:var(--surface);color:var(--text);border:2px solid var(--border);}
@@ -67,78 +48,37 @@ button{cursor:pointer; font-family:inherit;}
 .btn-danger{background:var(--red);color:#fff;}
 .btn-danger:hover{opacity:.85;}
 
-/* ===== DECK LIST ===== */
-.deck-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;flex-wrap:wrap;transition:.2s;
-  box-shadow:var(--shadow);
-}
+.deck-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;transition:.2s;box-shadow:var(--shadow);}
 .deck-card:hover{border-color:var(--accent);}
 .deck-info{flex:1;min-width:0;}
 .deck-info h3{font-size:1rem;font-weight:600;margin-bottom:4px;}
 .deck-meta{font-size:.8rem;color:var(--text2);display:flex;gap:12px;flex-wrap:wrap;}
 .deck-actions{display:flex;gap:8px;}
 
-/* Progress pill */
-.progress-pill{
-  display:inline-flex;align-items:center;gap:4px;
-  background:var(--accent-l);color:var(--accent);padding:3px 10px;
-  border-radius:12px;font-size:.75rem;font-weight:600;
-}
+.progress-pill{display:inline-flex;align-items:center;gap:4px;background:var(--accent-l);color:var(--accent);padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:600;}
 
-/* ===== IMPORT ZONE ===== */
-.import-zone{
-  border:2px dashed var(--border);border-radius:var(--radius);padding:32px 24px;
-  text-align:center;cursor:pointer;transition:.2s;margin-bottom:16px;
-  background:var(--surface);
-}
+.import-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:16px;background:var(--surface);}
 .import-zone:hover,.import-zone.dragover{border-color:var(--accent);background:var(--accent-l);}
 .import-zone p{color:var(--text2);font-size:.9rem;margin-top:8px;}
 .import-zone .icon{font-size:2.5rem;}
 
 .paste-area{display:none;margin-top:12px;}
 .paste-area.show{display:block;}
-.paste-area textarea{
-  width:100%;height:120px;border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:12px;font-size:.85rem;font-family:monospace;resize:vertical;
-  background:var(--surface);color:var(--text);
-}
+.paste-area textarea{width:100%;height:120px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-size:.85rem;font-family:monospace;resize:vertical;background:var(--surface);color:var(--text);}
 
-/* ===== REVIEW MODE ===== */
-.review-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  box-shadow:var(--shadow-lg);padding:32px 24px;text-align:center;
-  max-width:480px;margin:0 auto;
-}
-.review-card .big-word{font-size:2.6rem;font-weight:800;margin-bottom:8px;}
-.review-card .phonetic{font-size:1.1rem;color:var(--text2);margin-bottom:24px;}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:32px 24px;text-align:center;max-width:480px;margin:0 auto;}
+.big-word{font-size:2.6rem;font-weight:800;margin-bottom:8px;}
+.phonetic{font-size:1.1rem;color:var(--text2);margin-bottom:24px;}
 .review-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
-.review-actions .btn{padding:14px 36px;font-size:1rem;border-radius:28px;}
-.review-actions .btn-know{background:var(--green);color:#fff;border:none;}
-.review-actions .btn-know:hover{opacity:.9;}
-.review-actions .btn-dunno{background:var(--red);color:#fff;border:none;}
-.review-actions .btn-dunno:hover{opacity:.9;}
-.review-progress{margin-top:20px;}
 
-/* Progress bar */
 .progress-wrap{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--text2);}
 .progress-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;}
 
-/* ===== STUDY / FLASHCARD ===== */
-.flashcard-wrap{perspective:1200px;cursor:pointer;max-width:480px;margin:0 auto;user-select:none;}
-.flashcard{
-  width:100%;aspect-ratio:1.35;position:relative;transform-style:preserve-3d;
-  transition:transform .5s cubic-bezier(.4,0,.2,1);
-}
+.flashcard-wrap{perspective:1200px;cursor:pointer;max-width:480px;margin:0 auto;user-select:none;-webkit-tap-highlight-color:transparent;}
+.flashcard{width:100%;aspect-ratio:1.35;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
 .flashcard.flipped{transform:rotateY(180deg);}
-.fc-face{
-  position:absolute;inset:0;border-radius:var(--radius);
-  background:var(--surface);border:1px solid var(--border);
-  box-shadow:var(--shadow-lg);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:28px;backface-visibility:hidden;
-}
+.fc-face{position:absolute;inset:0;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;backface-visibility:hidden;}
 .fc-back{transform:rotateY(180deg);}
 .fc-word{font-size:2.4rem;font-weight:800;margin-bottom:6px;}
 .fc-phonetic{font-size:1rem;color:var(--text2);margin-bottom:6px;}
@@ -148,77 +88,46 @@ button{cursor:pointer; font-family:inherit;}
 .fc-example{font-size:.85rem;color:var(--accent);text-align:center;line-height:1.5;}
 
 .fc-nav{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:16px;}
-.fc-nav-btn{
-  width:40px;height:40px;border-radius:50%;border:1px solid var(--border);
-  background:var(--surface);font-size:1.1rem;color:var(--text);
-  display:flex;align-items:center;justify-content:center;transition:.2s;
-}
+.fc-nav-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);font-size:1.1rem;color:var(--text);display:flex;align-items:center;justify-content:center;transition:.2s;}
 .fc-nav-btn:hover{border-color:var(--accent);background:var(--accent-l);}
 .fc-counter{font-size:.85rem;color:var(--text2);min-width:56px;text-align:center;}
 
 .fc-actions{display:flex;gap:10px;justify-content:center;margin-top:12px;}
-.fc-actions .btn-know{border-color:var(--green);color:var(--green);}
-.fc-actions .btn-know:hover,.fc-actions .btn-know.active{background:var(--green);color:#fff;}
-.fc-actions .btn-dunno{border-color:var(--red);color:var(--red);}
-.fc-actions .btn-dunno:hover,.fc-actions .btn-dunno.active{background:var(--red);color:#fff;}
 
-/* ===== QUIZ ===== */
 .quiz-wrap{max-width:500px;margin:0 auto;}
 .quiz-q-word{font-size:2.2rem;font-weight:800;text-align:center;padding:12px;}
 .quiz-q-phonetic{font-size:1rem;color:var(--text2);text-align:center;margin-bottom:16px;}
 .quiz-opts{display:flex;flex-direction:column;gap:8px;}
-.quiz-opt{
-  padding:12px 18px;border-radius:var(--radius-sm);border:2px solid var(--border);
-  background:var(--surface);font-size:.95rem;text-align:left;transition:.2s;
-}
+.quiz-opt{padding:12px 18px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--surface);font-size:.95rem;text-align:left;transition:.2s;}
 .quiz-opt:hover{border-color:var(--accent);background:var(--accent-l);}
 .quiz-opt.correct{border-color:var(--green)!important;background:#d1fae5!important;}
 .quiz-opt.wrong{border-color:var(--red)!important;background:#fee2e2!important;}
 .quiz-fb{text-align:center;font-size:1rem;font-weight:600;min-height:26px;margin-top:10px;}
 
-/* ===== WORD TABLE ===== */
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:.88rem;}
 th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);}
 th{background:var(--accent-l);color:var(--accent);font-weight:600;white-space:nowrap;}
 tr:last-child td{border-bottom:none;}
-td.word-col{font-weight:700;white-space:nowrap;}
-td.zh-col{line-height:1.4;}
+.word-col{font-weight:700;white-space:nowrap;}
+.zh-col{line-height:1.4;}
 
-.search-box{
-  width:100%;padding:10px 14px;border-radius:20px;border:2px solid var(--border);
-  background:var(--surface);font-size:.9rem;color:var(--text);outline:none;
-  margin-bottom:12px;transition:.2s;
-}
+.search-box{width:100%;padding:10px 14px;border-radius:20px;border:2px solid var(--border);background:var(--surface);font-size:.9rem;color:var(--text);outline:none;margin-bottom:12px;transition:.2s;}
 .search-box:focus{border-color:var(--accent);}
 
-/* ===== TABS ===== */
-.tabs{display:flex;gap:3px;background:var(--border);border-radius:22px;padding:3px;}
-.tab{
-  padding:7px 16px;border-radius:20px;border:none;background:transparent;
-  font-size:.85rem;color:var(--text2);font-weight:500;transition:.2s;
-}
+.tabs{display:flex;gap:3px;background:var(--border);border-radius:22px;padding:3px;margin-bottom:16px;}
+.tab{padding:7px 16px;border-radius:20px;border:none;background:transparent;font-size:.85rem;color:var(--text2);font-weight:500;transition:.2s;}
 .tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1);}
 .tab:hover:not(.active){color:var(--text);}
 
-/* ===== MODAL OVERLAY ===== */
-.overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;
-  align-items:center;justify-content:center;z-index:100;padding:16px;
-}
-.modal{
-  background:var(--surface);border-radius:var(--radius);padding:24px;
-  max-width:500px;width:100%;box-shadow:var(--shadow-lg);
-}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.modal{background:var(--surface);border-radius:var(--radius);padding:24px;max-width:500px;width:100%;box-shadow:var(--shadow-lg);}
 .modal h3{margin-bottom:12px;}
-.modal .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
 
-/* ===== SHORTCUTS ===== */
 .shortcuts{text-align:center;font-size:.78rem;color:var(--text2);padding:12px 0;opacity:.7;}
 
-/* ===== RESPONSIVE ===== */
 @media(max-width:500px){
-  .review-card .big-word{font-size:2rem;}
+  .big-word{font-size:2rem;}
   .fc-word{font-size:1.8rem;}
   .quiz-q-word{font-size:1.7rem;}
   .deck-card{flex-direction:column;align-items:stretch;}
@@ -229,9 +138,10 @@ td.zh-col{line-height:1.4;}
 </head>
 <body>
 
-<div class="app" id="app">
-  <!-- dynamically rendered -->
-</div>
+<div id="app" class="app"></div>
+
+<!-- Hidden file input for import -->
+<input type="file" id="fileInput" accept=".html,.htm" style="display:none">
 
 <script>
 // ===================== PRESET DATA =====================
@@ -259,7 +169,7 @@ const PRESET_WORDS = [
   {word:"probation",phonetic:"/prəˈbeɪʃ(ə)n/",zh:"n. 试用；缓刑；查验",en:"a trial period during which your character and abilities are tested",example:"He was given two years' probation."},
   {word:"depression",phonetic:"/dɪˈpreʃn/",zh:"n. 沮丧；抑郁症；洼地；不景气；低气压区",en:"a mental state characterized by a pessimistic sense of inadequacy",example:"Depression is treatable."},
   {word:"proximity",phonetic:"/prɒkˈsɪməti/",zh:"n. 接近，邻近；接近度，距离",en:"the property of being close together",example:"He became aware of the proximity of the Afghans."},
-  {word:"attention",phonetic:"/əˈtenʃ(ə)n/",zh:"n. 注意力；关心；立正！（口令）",en:"the process whereby a person concentrates on some features of the environment",example:"My shoes caught his attention."},
+  {word:"attention",phonetic:"/əˈtenʃ(ə)n/",zh:"n. 注意力；关心；立正！",en:"the process whereby a person concentrates on some features of the environment",example:"My shoes caught his attention."},
   {word:"factual",phonetic:"/ˈfæktʃuəl/",zh:"adj. 事实的；真实的",en:"existing in act or fact",example:"The essay contains a number of factual errors."},
   {word:"acclaim",phonetic:"/əˈkleɪm/",zh:"v. 称赞；为……喝彩，向……欢呼",en:"enthusiastic approval",example:"The novel received great acclaim."},
   {word:"carry",phonetic:"/ˈkæri/",zh:"vt. 拿，扛；携带；支持；搬运",en:"move while supporting",example:"He was carrying a large bag."},
@@ -273,7 +183,7 @@ const PRESET_WORDS = [
   {word:"address",phonetic:"/əˈdres/",zh:"n. 地址；演讲；称呼；v. 处理；演说",en:"the place where a person or organization can be found",example:"Please write your address clearly."},
   {word:"payment",phonetic:"/ˈpeɪmənt/",zh:"n. 付款，支付；报酬；偿还",en:"a sum of money paid or a claim discharged",example:"Payment must be made in advance."},
   {word:"superb",phonetic:"/suːˈpɜːb/",zh:"adj. 极好的；华丽的；宏伟的",en:"of surpassing excellence",example:"The food was superb."},
-  {word:"intention",phonetic:"/ɪnˈtenʃ(ə)n/",zh:"n. 意图；目的；意向",en:"an anticipated outcome that is intended or that guides your planned actions",example:"I have no intention of leaving."},
+  {word:"intention",phonetic:"/ɪnˈtenʃ(ə)n/",zh:"n. 意图；目的；意向",en:"an anticipated outcome that is intended",example:"I have no intention of leaving."},
   {word:"demonstrate",phonetic:"/ˈdemənstreɪt/",zh:"vt. 证明；展示；论证",en:"give an exhibition of to an interested audience",example:"The study demonstrates the link between poverty and malnutrition."},
   {word:"agenda",phonetic:"/əˈdʒendə/",zh:"n. 议程；日常工作事项；日程表",en:"a list of matters to be taken up",example:"The next item on the agenda is the budget."},
   {word:"illuminate",phonetic:"/ɪˈluːmɪneɪt/",zh:"vt. 阐明，说明；照亮；使灿烂",en:"make lighter or brighter",example:"The room was illuminated by candles."},
@@ -312,601 +222,551 @@ const PRESET_WORDS = [
 // ===================== STORAGE =====================
 const LS_DECKS = 'vt_decks';
 const LS_SETTINGS = 'vt_settings';
-
-function loadDecks(){
-  try{return JSON.parse(localStorage.getItem(LS_DECKS))||{};}catch(e){return{};}
-}
+function loadDecks(){ try{return JSON.parse(localStorage.getItem(LS_DECKS))||{};}catch(e){return{};} }
 function saveDecks(d){localStorage.setItem(LS_DECKS,JSON.stringify(d));}
-function loadSettings(){
-  try{return JSON.parse(localStorage.getItem(LS_SETTINGS))||{};}catch(e){return{};}
-}
+function loadSettings(){ try{return JSON.parse(localStorage.getItem(LS_SETTINGS))||{};}catch(e){return{};} }
 function saveSettings(s){localStorage.setItem(LS_SETTINGS,JSON.stringify(s));}
 
 function ensurePreset(){
   const decks = loadDecks();
   if(Object.keys(decks).length===0){
     const id = 'preset-list7';
-    decks[id] = {
-      id, title:'雅思词汇（完整版）(List 7)', createdAt:Date.now(),
-      words: PRESET_WORDS.map(w=>({...w,status:'unknown'}))
-    };
+    decks[id] = { id, title:'雅思词汇（完整版）(List 7)', createdAt:Date.now(), words: PRESET_WORDS.map(w=>({...w,status:'unknown'})) };
     saveDecks(decks);
   }
 }
 
 // ===================== APP STATE =====================
 let decks = {};
-let currentView = 'decks'; // decks | review | study | import-preview
+let currentView = 'decks';
 let activeDeckId = null;
-let reviewIndex = 0;
-let reviewWords = [];
-let studyIndex = 0;
-let studyWords = [];
-let cardFlipped = false;
-let studyMode = 'flashcard'; // flashcard | quiz | list
+let reviewIndex = 0, reviewWords = [];
+let studyIndex = 0, studyWords = [], cardFlipped = false;
+let studyMode = 'flashcard';
+let quizWords=[], quizIdx=0, quizCorrect=0, quizAnswered=false, quizCur=null, quizOpts=[];
+let previewData = null, studyListFilter = '';
 
-// Quiz state
-let quizWords=[], quizIdx=0, quizCorrect=0, quizAnswered=false;
-let quizCur=null, quizOpts=[];
+function getDeck(){ return decks[activeDeckId]; }
+function save(){ saveDecks(decks); }
 
-function getDeck(){
-  return decks[activeDeckId];
-}
-function save(){saveDecks(decks);}
+// ===================== SINGLE EVENT DELEGATION =====================
+document.getElementById('app').addEventListener('click', function(e){
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  const arg = btn.dataset.arg;
+  const arg2 = btn.dataset.arg2;
 
-// ===================== RENDER ENGINE =====================
-const app = document.getElementById('app');
+  e.stopPropagation();
 
-function h(tag,attrs,...children){
-  const el = document.createElement(tag);
-  if(attrs){
-    for(const[k,v] of Object.entries(attrs)){
-      if(k==='className') el.className=v;
-      else if(k.startsWith('on')&&typeof v==='function') el.addEventListener(k.slice(2),v);
-      else el.setAttribute(k,v);
-    }
+  switch(action){
+    // Global
+    case 'go-decks': currentView='decks'; activeDeckId=null; render(); break;
+    case 'toggle-theme': toggleTheme(); break;
+    // Decks
+    case 'start-review': startReview(arg); break;
+    case 'start-study': startStudy(arg); break;
+    case 'delete-deck': deleteDeck(arg); break;
+    case 'show-paste': document.getElementById('pasteArea').classList.toggle('show'); break;
+    case 'process-paste': processPaste(); break;
+    // Import preview
+    case 'cancel-import': previewData=null; currentView='decks'; render(); break;
+    case 'confirm-import': confirmImport(); break;
+    // Review
+    case 'review-know': reviewAnswer(true); break;
+    case 'review-dunno': reviewAnswer(false); break;
+    case 'finish-review': finishReview(); break;
+    // Study tabs
+    case 'study-flashcard': studyMode='flashcard'; render(); break;
+    case 'study-quiz': studyMode='quiz'; initQuiz(); render(); break;
+    case 'study-list': studyMode='list'; render(); break;
+    // Flashcard
+    case 'fc-flip': flipFC(); break;
+    case 'fc-prev': studyIndex=(studyIndex-1+studyWords.length)%studyWords.length; cardFlipped=false; render(); break;
+    case 'fc-next': studyIndex=(studyIndex+1)%studyWords.length; cardFlipped=false; render(); break;
+    case 'fc-known': markStudyWord(true); break;
+    case 'fc-reset-all': resetAllStudy(); break;
+    // Quiz
+    case 'quiz-answer': quizAnswer(parseInt(arg)); break;
+    case 'quiz-next': nextQuiz(); break;
+    case 'quiz-retry': initQuiz(); render(); break;
+    case 'quiz-back-card': studyMode='flashcard'; render(); break;
+    // Study list
+    case 'sl-known': markStudyListWord(parseInt(arg)); break;
+    // Review done
+    case 'review-done-back': currentView='decks'; render(); break;
+    case 'review-done-study': startStudy(activeDeckId); break;
   }
-  for(const c of children){
-    if(c==null)continue;
-    el.append(typeof c==='string'?document.createTextNode(c):c);
-  }
-  return el;
-}
+  render();
+});
+
+// File input change
+document.getElementById('fileInput').addEventListener('change', function(e){
+  const f = e.target.files[0];
+  if(f) processFile(f);
+  this.value = '';
+});
+
+// ===================== RENDER =====================
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function render(){
-  app.innerHTML='';
   const settings = loadSettings();
   const isDark = settings.theme==='dark';
-  if(isDark) document.body.classList.add('dark');
-  else document.body.classList.remove('dark');
+  document.body.classList.toggle('dark', isDark);
 
-  app.append(
-    h('div',{className:'app-header'}, ...[
-      h('h1',{},'📚 VocabTrainer'),
-      h('div',{className:'header-right'}, ...[
-        currentView!=='decks'?h('button',{className:'btn btn-outline btn-sm',onClick:()=>{currentView='decks';render();}},'🏠 词库'):null,
-        h('button',{className:'theme-btn',onClick:toggleTheme},isDark?'☀️':'🌙')
-      ].filter(Boolean))
-    ].filter(Boolean)),
-    renderBreadcrumb(),
-    renderMain()
-  );
-}
+  let html = '';
+  // Header
+  html += '<div class="app-header">';
+  html += '<h1>📚 VocabTrainer</h1>';
+  html += '<div class="header-right">';
+  if(currentView!=='decks') html += '<button class="btn btn-outline btn-sm" data-action="go-decks">🏠 词库</button>';
+  html += '<button class="theme-btn" data-action="toggle-theme">'+(isDark?'☀️':'🌙')+'</button>';
+  html += '</div></div>';
 
-function toggleTheme(){
-  const s=loadSettings();
-  s.theme=s.theme==='dark'?'light':'dark';
-  saveSettings(s);
-  render();
-}
-
-function renderBreadcrumb(){
-  const parts=[h('a',{onClick:()=>{currentView='decks';activeDeckId=null;render();}},'词库列表')];
-  if(activeDeckId&&currentView!=='decks'){
-    const d=getDeck();
-    if(currentView==='review') parts.push(h('span',{},'›'),h('a',{onClick:()=>{currentView='review';resetReview();render();}},d.title),h('span',{},'› 筛查'));
-    else if(currentView==='study') parts.push(h('span',{},'›'),h('a',{onClick:()=>{currentView='study';resetStudy();render();}},d.title),h('span',{},'› 背生词'));
-    else if(currentView==='import-preview') parts.push(h('span',{},'›'),h('span',{},'导入预览'));
+  // Breadcrumb
+  html += '<div class="breadcrumb"><a data-action="go-decks">词库列表</a>';
+  if(activeDeckId && currentView!=='decks'){
+    const d = getDeck();
+    if(currentView==='review') html += ' <span>›</span> <a data-action="go-decks">'+esc(d.title)+'</a> <span>› 筛查</span>';
+    else if(currentView==='study') html += ' <span>›</span> <a data-action="go-decks">'+esc(d.title)+'</a> <span>› 背生词</span>';
+    else if(currentView==='import-preview') html += ' <span>›</span> <span>导入预览</span>';
   }
-  return h('div',{className:'breadcrumb'},...parts);
-}
+  html += '</div>';
 
-function renderMain(){
+  // Main
   switch(currentView){
-    case 'decks': return renderDecks();
-    case 'review': return renderReview();
-    case 'study': return renderStudy();
-    case 'import-preview': return renderImportPreview();
-    default: return h('p',{},'...');
+    case 'decks': html += renderDecksHTML(); break;
+    case 'review': html += renderReviewHTML(); break;
+    case 'study': html += renderStudyHTML(); break;
+    case 'import-preview': html += renderImportPreviewHTML(); break;
   }
+
+  document.getElementById('app').innerHTML = html;
+
+  // Post-render setup
+  if(currentView==='decks') setupImportZone();
+  if(currentView==='study' && studyMode==='list') setupSearchInput();
 }
 
-// ===================== DECKS VIEW =====================
-function renderDecks(){
-  decks=loadDecks();
-  const list=Object.values(decks).sort((a,b)=>b.createdAt-a.createdAt);
-  const children=[
-    h('h2',{},'📦 导入词库'),
-    renderImportZone()
-  ];
+// ===================== DECKS =====================
+function renderDecksHTML(){
+  decks = loadDecks();
+  const list = Object.values(decks).sort((a,b)=>b.createdAt-a.createdAt);
+  let h = '<h2 style="margin-bottom:12px">📦 导入词库</h2>';
+  h += '<div class="import-zone" id="importZone">';
+  h += '<div class="icon">📂</div>';
+  h += '<p>点击选择 HTML 文件，或拖拽文件到这里</p>';
+  h += '<p style="font-size:.8rem;opacity:.7">也支持粘贴 HTML 源码</p>';
+  h += '<button class="btn btn-outline btn-sm" data-action="show-paste" style="margin-top:8px">📋 粘贴源码</button>';
+  h += '</div>';
+  h += '<div class="paste-area" id="pasteArea">';
+  h += '<textarea id="pasteTextarea" placeholder="在这里粘贴 HTML 源码..."></textarea>';
+  h += '<button class="btn btn-primary btn-sm" data-action="process-paste" style="margin-top:8px">解析并导入</button>';
+  h += '</div>';
+
   if(list.length>0){
-    children.push(h('h2',{style:'margin-top:20px'},'📋 我的词库 ('+list.length+')'));
+    h += '<h2 style="margin-top:20px;margin-bottom:10px">📋 我的词库 ('+list.length+')</h2>';
     for(const d of list){
-      const known=d.words.filter(w=>w.status==='known').length;
-      const total=d.words.length;
-      const pct=total>0?Math.round(known/total*100):0;
-      children.push(
-        h('div',{className:'deck-card'}, ...[
-          h('div',{className:'deck-info'}, ...[
-            h('h3',{},d.title),
-            h('div',{className:'deck-meta'}, ...[
-              h('span',{},total+' 个单词'),
-              h('span',{className:'progress-pill'},'✅ '+known+' / '+total+' ('+pct+'%)')
-            ].filter(Boolean))
-          ].filter(Boolean)),
-          h('div',{className:'deck-actions'}, ...[
-            h('button',{className:'btn btn-primary btn-sm',onClick:()=>startReview(d.id)},'🔍 筛查'),
-            h('button',{className:'btn btn-outline btn-sm',onClick:()=>startStudy(d.id)},'📖 背生词'),
-            h('button',{className:'btn btn-outline btn-sm',onClick:()=>deleteDeck(d.id),style:'color:var(--red);border-color:var(--red)'},'🗑')
-          ].filter(Boolean))
-        ].filter(Boolean))
-      );
+      const known = d.words.filter(w=>w.status==='known').length;
+      const total = d.words.length;
+      const pct = total>0?Math.round(known/total*100):0;
+      h += '<div class="deck-card">';
+      h += '<div class="deck-info"><h3>'+esc(d.title)+'</h3>';
+      h += '<div class="deck-meta"><span>'+total+' 个单词</span>';
+      h += '<span class="progress-pill">✅ '+known+' / '+total+' ('+pct+'%)</span></div></div>';
+      h += '<div class="deck-actions">';
+      h += '<button class="btn btn-primary btn-sm" data-action="start-review" data-arg="'+esc(d.id)+'">🔍 筛查</button>';
+      h += '<button class="btn btn-outline btn-sm" data-action="start-study" data-arg="'+esc(d.id)+'">📖 背生词</button>';
+      h += '<button class="btn btn-outline btn-sm" data-action="delete-deck" data-arg="'+esc(d.id)+'" style="color:var(--red);border-color:var(--red)">🗑</button>';
+      h += '</div></div>';
     }
   }
-  return h('div',{},...children);
+  return h;
+}
+
+function setupImportZone(){
+  const zone = document.getElementById('importZone');
+  if(!zone) return;
+  zone.addEventListener('click', function(){ document.getElementById('fileInput').click(); });
+  zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', function(){ zone.classList.remove('dragover'); });
+  zone.addEventListener('drop', function(e){
+    e.preventDefault(); zone.classList.remove('dragover');
+    const f = e.dataTransfer.files[0];
+    if(f) processFile(f);
+  });
 }
 
 function deleteDeck(id){
   if(!confirm('确定删除这个词库吗？此操作不可撤销。')) return;
-  decks=loadDecks();
+  decks = loadDecks();
   delete decks[id];
   saveDecks(decks);
   render();
 }
 
 // ===================== IMPORT =====================
-function renderImportZone(){
-  const zone = h('div',{className:'import-zone',onClick:()=>document.getElementById('fileInput').click()}, ...[
-    h('div',{className:'icon'},'📂'),
-    h('p',{},'点击选择 HTML 文件，或拖拽文件到这里'),
-    h('p',{style:'fontSize:".8rem";opacity:".7"',},'也支持粘贴 HTML 源码'),
-    h('button',{className:'btn btn-outline btn-sm',onClick:(e)=>{e.stopPropagation();togglePaste();},style:'margin-top:8px'},'📋 粘贴源码'),
-    h('input',{type:'file',id:'fileInput',accept:'.html,.htm',style:'display:none',onChange:handleFileSelect})
-  ].filter(Boolean));
-
-  // Drag and drop
-  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
-  zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
-  zone.addEventListener('drop',e=>{
-    e.preventDefault();zone.classList.remove('dragover');
-    const f=e.dataTransfer.files[0];
-    if(f) processFile(f);
-  });
-
-  const pasteArea = h('div',{className:'paste-area',id:'pasteArea'}, ...[
-    h('textarea',{id:'pasteTextarea',placeholder:'在这里粘贴 HTML 源码...'}),
-    h('button',{className:'btn btn-primary btn-sm',onClick:processPaste,style:'margin-top:8px'},'解析并导入')
-  ].filter(Boolean));
-
-  return h('div',{},zone,pasteArea);
-}
-
-function togglePaste(){
-  document.getElementById('pasteArea').classList.toggle('show');
-}
-
-function handleFileSelect(e){
-  const f=e.target.files[0];
-  if(f) processFile(f);
-}
-
 function processFile(file){
-  const reader=new FileReader();
-  reader.onload=function(){
-    parseAndPreview(reader.result);
-  };
+  const reader = new FileReader();
+  reader.onload = function(){ parseAndPreview(reader.result); };
   reader.readAsText(file);
 }
 
 function processPaste(){
-  const html=document.getElementById('pasteTextarea').value.trim();
-  if(!html){alert('请先粘贴 HTML 内容');return;}
+  const html = document.getElementById('pasteTextarea').value.trim();
+  if(!html){ alert('请先粘贴 HTML 内容'); return; }
   parseAndPreview(html);
 }
 
-let previewData=null;
 function parseAndPreview(htmlString){
-  const parser=new DOMParser();
-  const doc=parser.parseFromString(htmlString,'text/html');
-  const title=doc.querySelector('.practice-vocabulary__title')?.textContent?.trim()||'未命名词库';
-  const words=[];
-  const wordEls=doc.querySelectorAll('.practice-vocabulary__word');
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString,'text/html');
+  const title = doc.querySelector('.practice-vocabulary__title')?.textContent?.trim()||'未命名词库';
+  const words = [];
+  const wordEls = doc.querySelectorAll('.practice-vocabulary__word');
   wordEls.forEach(el=>{
-    const item=el.closest('.practice-vocabulary__item');
+    const item = el.closest('.practice-vocabulary__item');
     if(!item) return;
     words.push({
-      word:el.textContent.trim(),
-      phonetic:'',
-      zh:item.querySelector('.practice-vocabulary__meaning-zh')?.textContent?.trim()||'',
-      en:item.querySelector('.practice-vocabulary__meaning-en')?.textContent?.trim()||'',
-      example:item.querySelector('.practice-vocabulary__meaning-example')?.textContent?.trim()||'',
+      word: el.textContent.trim(), phonetic:'',
+      zh: item.querySelector('.practice-vocabulary__meaning-zh')?.textContent?.trim()||'',
+      en: item.querySelector('.practice-vocabulary__meaning-en')?.textContent?.trim()||'',
+      example: item.querySelector('.practice-vocabulary__meaning-example')?.textContent?.trim()||'',
       status:'unknown'
     });
   });
+  const phoneticEls = doc.querySelectorAll('.practice-vocabulary__phonetic-text');
+  phoneticEls.forEach((el,i)=>{ if(words[i]) words[i].phonetic = el.textContent.trim(); });
 
-  // Also try to extract phonetic
-  const phoneticEls=doc.querySelectorAll('.practice-vocabulary__phonetic-text');
-  phoneticEls.forEach((el,i)=>{
-    if(words[i]) words[i].phonetic=el.textContent.trim();
-  });
-
-  if(words.length===0){
-    alert('未能从该文件中识别出单词。请确认文件格式与「基础练习.html」一致。');
-    return;
-  }
-
-  previewData={title,words};
-  currentView='import-preview';
+  if(words.length===0){ alert('未能从该文件中识别出单词。请确认文件格式与「基础练习.html」一致。'); return; }
+  previewData = {title, words};
+  currentView = 'import-preview';
   render();
 }
 
-function renderImportPreview(){
-  if(!previewData) {currentView='decks';render();return;}
-  const {title,words}=previewData;
-  return h('div',{className:'card'}, ...[
-    h('h2',{},'📥 导入预览'),
-    h('p',{style:'margin-bottom:8px;color:var(--text2)'},'识别到词库: '+title),
-    h('p',{style:'margin-bottom:16px;color:var(--text2)'},'共 '+words.length+' 个单词'),
-    h('div',{className:'table-wrap',style:'max-height:300px;overflow-y:auto;margin-bottom:16px'},
-      h('table',{}, ...[
-        h('thead',{},h('tr',{},h('th',{},'单词'),h('th',{},'中文释义'))),
-        h('tbody',{},...words.slice(0,50).map(w=>h('tr',{},h('td',{className:'word-col'},w.word),h('td',{className:'zh-col'},w.zh))))
-      ].filter(Boolean))
-    ),
-    words.length>50?h('p',{style:'fontSize:".85rem";color:var(--text2);marginBottom:"12px"'},'...还有 '+(words.length-50)+' 个单词'):null,
-    h('div',{className:'btn-row',style:'display:flex;gap:8px'}, ...[
-      h('button',{className:'btn btn-outline',onClick:()=>{previewData=null;currentView='decks';render();}},'取消'),
-      h('button',{className:'btn btn-primary',onClick:confirmImport},'确认导入 ('+words.length+' 词)')
-    ].filter(Boolean))
-  ].filter(Boolean));
+function renderImportPreviewHTML(){
+  if(!previewData) { currentView='decks'; return renderDecksHTML(); }
+  const {title, words} = previewData;
+  let h = '<div class="card">';
+  h += '<h2>📥 导入预览</h2>';
+  h += '<p style="color:var(--text2);margin-bottom:8px">识别到词库: '+esc(title)+'</p>';
+  h += '<p style="color:var(--text2);margin-bottom:16px">共 '+words.length+' 个单词</p>';
+  h += '<div class="table-wrap" style="max-height:300px;overflow-y:auto;margin-bottom:16px"><table>';
+  h += '<thead><tr><th>单词</th><th>中文释义</th></tr></thead><tbody>';
+  for(const w of words.slice(0,50)){
+    h += '<tr><td class="word-col">'+esc(w.word)+'</td><td class="zh-col">'+esc(w.zh)+'</td></tr>';
+  }
+  h += '</tbody></table></div>';
+  if(words.length>50) h += '<p style="font-size:.85rem;color:var(--text2);margin-bottom:12px">...还有 '+(words.length-50)+' 个单词</p>';
+  h += '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">';
+  h += '<button class="btn btn-outline" data-action="cancel-import">取消</button>';
+  h += '<button class="btn btn-primary" data-action="confirm-import">确认导入 ('+words.length+' 词)</button>';
+  h += '</div></div>';
+  return h;
 }
 
 function confirmImport(){
   if(!previewData) return;
-  decks=loadDecks();
-  const id='deck-'+Date.now();
-  decks[id]={
-    id, title:previewData.title, createdAt:Date.now(),
-    words:previewData.words
-  };
+  decks = loadDecks();
+  const id = 'deck-'+Date.now();
+  decks[id] = { id, title:previewData.title, createdAt:Date.now(), words:previewData.words };
   saveDecks(decks);
-  previewData=null;
-  currentView='decks';
-  render();
+  previewData = null;
+  currentView = 'decks';
 }
 
-// ===================== REVIEW (筛查) =====================
+// ===================== REVIEW =====================
 function startReview(deckId){
-  activeDeckId=deckId;
-  decks=loadDecks();
-  const d=getDeck();
+  activeDeckId = deckId;
+  decks = loadDecks();
+  const d = getDeck();
   if(!d) return;
-  reviewWords=d.words.filter(w=>w.status==='unknown');
-  if(reviewWords.length===0){
-    alert('这个词库中所有单词都已标记为"认识"！');
-    return;
-  }
-  reviewIndex=0;
-  currentView='review';
-  render();
-}
-
-function resetReview(){
-  const d=getDeck();
-  if(!d) return;
-  reviewWords=d.words.filter(w=>w.status==='unknown');
-  reviewIndex=0;
-}
-
-function renderReview(){
-  if(reviewIndex>=reviewWords.length){
-    return renderReviewDone();
-  }
-  const w=reviewWords[reviewIndex];
-  const total=reviewWords.length;
-  const done=reviewIndex;
-  const pct=Math.round(done/total*100);
-
-  return h('div',{}, ...[
-    h('div',{className:'review-card'}, ...[
-      h('div',{className:'big-word'},w.word),
-      h('div',{className:'phonetic'},w.phonetic||''),
-      h('div',{className:'review-actions'}, ...[
-        h('button',{className:'btn btn-dunno',onClick:()=>reviewAnswer(false)},'❌ 不认识'),
-        h('button',{className:'btn btn-know',onClick:()=>reviewAnswer(true)},'✅ 认识')
-      ].filter(Boolean)),
-      h('div',{className:'review-progress'}, ...[
-        h('div',{className:'progress-wrap'}, ...[
-          h('span',{},'筛查进度'),
-          h('div',{className:'progress-bar'},h('div',{className:'progress-fill',style:'width:'+pct+'%'})),
-          h('span',{},done+'/'+total)
-        ].filter(Boolean))
-      ].filter(Boolean)),
-    ].filter(Boolean)),
-    h('div',{className:'shortcuts'},'⌨ 按 1=认识  2=不认识  ← 返回上一个'),
-    h('div',{style:'textAlign:"center";marginTop:"8px"'},h('button',{className:'btn btn-outline btn-sm',onClick:finishReview},'结束筛查'))
-  ].filter(Boolean));
+  reviewWords = d.words.filter(w=>w.status==='unknown');
+  if(reviewWords.length===0){ alert('这个词库中所有单词都已标记为"认识"！'); return; }
+  reviewIndex = 0;
+  currentView = 'review';
 }
 
 function reviewAnswer(known){
-  const w=reviewWords[reviewIndex];
-  w.status=known?'known':'unknown';
+  reviewWords[reviewIndex].status = known?'known':'unknown';
   reviewIndex++;
   save();
-  render();
 }
 
 function finishReview(){
-  const remaining = reviewWords.slice(reviewIndex);
-  for(const w of remaining) w.status='unknown';
+  for(let i=reviewIndex; i<reviewWords.length; i++) reviewWords[i].status='unknown';
   save();
-  currentView='decks';
-  render();
+  currentView = 'decks';
 }
 
-function renderReviewDone(){
-  const d=getDeck();
-  const known=d.words.filter(w=>w.status==='known').length;
-  const total=d.words.length;
-  const pct=Math.round(known/total*100);
-  const fresh = d.words.filter(w=>w.status==='unknown').length;
-
-  return h('div',{className:'card',style:'textAlign:"center"'}, ...[
-    h('div',{style:'fontSize:"3rem";marginBottom:"8px"'},'🎉'),
-    h('h2',{},'筛查完成！'),
-    h('p',{style:'marginBottom:"4px"'},'✅ 认识: '+known+' 个'),
-    h('p',{style:'marginBottom:"4px"'},'📖 生词: '+fresh+' 个'),
-    h('p',{style:'marginBottom:"16px"',className:'progress-pill'},'掌握率 '+pct+'%'),
-    h('div',{style:'display:"flex";gap:"10px";justifyContent:"center"'}, ...[
-      h('button',{className:'btn btn-outline',onClick:()=>{currentView='decks';render();}},'返回词库'),
-      h('button',{className:'btn btn-primary',onClick:()=>{startStudy(activeDeckId);}},'开始背生词 ('+fresh+' 词)'),
-    ].filter(Boolean))
-  ].filter(Boolean));
+function renderReviewHTML(){
+  if(reviewIndex >= reviewWords.length){
+    const d = getDeck();
+    const known = d.words.filter(w=>w.status==='known').length;
+    const total = d.words.length;
+    const pct = Math.round(known/total*100);
+    const fresh = d.words.filter(w=>w.status==='unknown').length;
+    let h = '<div class="card" style="text-align:center">';
+    h += '<div style="font-size:3rem;margin-bottom:8px">🎉</div>';
+    h += '<h2>筛查完成！</h2>';
+    h += '<p style="margin-bottom:4px">✅ 认识: '+known+' 个</p>';
+    h += '<p style="margin-bottom:4px">📖 生词: '+fresh+' 个</p>';
+    h += '<p style="margin-bottom:16px"><span class="progress-pill">掌握率 '+pct+'%</span></p>';
+    h += '<div style="display:flex;gap:10px;justify-content:center">';
+    h += '<button class="btn btn-outline" data-action="review-done-back">返回词库</button>';
+    h += '<button class="btn btn-primary" data-action="review-done-study">开始背生词 ('+fresh+' 词)</button>';
+    h += '</div></div>';
+    return h;
+  }
+  const w = reviewWords[reviewIndex];
+  const total = reviewWords.length;
+  const done = reviewIndex;
+  const pct = Math.round(done/total*100);
+  let h = '<div class="review-card">';
+  h += '<div class="big-word">'+esc(w.word)+'</div>';
+  h += '<div class="phonetic">'+esc(w.phonetic||'')+'</div>';
+  h += '<div class="review-actions">';
+  h += '<button class="btn btn-dunno" data-action="review-dunno" style="background:var(--red);color:#fff;border:none;padding:14px 36px;font-size:1rem;border-radius:28px">❌ 不认识</button>';
+  h += '<button class="btn btn-know" data-action="review-know" style="background:var(--green);color:#fff;border:none;padding:14px 36px;font-size:1rem;border-radius:28px">✅ 认识</button>';
+  h += '</div>';
+  h += '<div class="review-progress"><div class="progress-wrap">';
+  h += '<span>筛查进度</span>';
+  h += '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+  h += '<span>'+done+'/'+total+'</span>';
+  h += '</div></div></div>';
+  h += '<div class="shortcuts">⌨ 按 1=认识  2=不认识  ← 返回上一个</div>';
+  h += '<div style="text-align:center;margin-top:8px"><button class="btn btn-outline btn-sm" data-action="finish-review">结束筛查</button></div>';
+  return h;
 }
 
-// ===================== STUDY (背生词) =====================
+// ===================== STUDY =====================
 function startStudy(deckId){
-  activeDeckId=deckId;
-  decks=loadDecks();
-  const d=getDeck();
+  activeDeckId = deckId;
+  decks = loadDecks();
+  const d = getDeck();
   if(!d) return;
-  studyWords=d.words.filter(w=>w.status==='unknown');
-  if(studyWords.length===0){
-    alert('没有生词了！所有单词都已掌握 🎉');
-    return;
-  }
-  studyIndex=0;
-  studyMode='flashcard';
-  currentView='study';
-  render();
-}
-
-function resetStudy(){
-  const d=getDeck();
-  if(!d) return;
-  studyWords=d.words.filter(w=>w.status==='unknown');
-  studyIndex=0;
-  cardFlipped=false;
+  studyWords = d.words.filter(w=>w.status==='unknown');
+  if(studyWords.length===0){ alert('没有生词了！所有单词都已掌握 🎉'); return; }
+  studyIndex = 0;
+  studyMode = 'flashcard';
+  cardFlipped = false;
   quizWords=[]; quizIdx=0; quizCorrect=0; quizAnswered=false;
+  currentView = 'study';
 }
 
-function renderStudy(){
+function renderStudyHTML(){
   if(studyWords.length===0){
-    const d=getDeck();
-    const known=d.words.filter(w=>w.status==='known').length;
-    return h('div',{className:'card',style:'textAlign:"center"'}, ...[
-      h('div',{style:'fontSize:"3rem"'},'🏆'),
-      h('h2',{},'全部掌握！'),
-      h('p',{},'这个词库的 '+d.words.length+' 个单词中，你已掌握 '+known+' 个'),
-      h('button',{className:'btn btn-primary',onClick:()=>{currentView='decks';render();},style:'marginTop:"12px"'},'返回词库')
-    ].filter(Boolean));
+    const d = getDeck();
+    const known = d.words.filter(w=>w.status==='known').length;
+    let h = '<div class="card" style="text-align:center">';
+    h += '<div style="font-size:3rem">🏆</div><h2>全部掌握！</h2>';
+    h += '<p>这个词库的 '+d.words.length+' 个单词中，你已掌握 '+known+' 个</p>';
+    h += '<button class="btn btn-primary" data-action="go-decks" style="margin-top:12px">返回词库</button>';
+    h += '</div>';
+    return h;
   }
-  const tabs=h('div',{className:'tabs',style:'marginBottom:"16px"',id:'studyTabs'}, ...[
-    h('button',{className:'tab'+(studyMode==='flashcard'?' active':''),onClick:()=>{studyMode='flashcard';render();}},'🎴 卡片'),
-    h('button',{className:'tab'+(studyMode==='quiz'?' active':''),onClick:()=>{studyMode='quiz';initQuiz();render();}},'✅ 测验'),
-    h('button',{className:'tab'+(studyMode==='list'?' active':''),onClick:()=>{studyMode='list';render();}},'📋 列表'),
-  ].filter(Boolean));
-
   const known = getDeck().words.filter(w=>w.status==='known').length;
   const total = getDeck().words.length;
   const pct = Math.round(known/total*100);
 
-  const stats=h('div',{className:'progress-wrap',style:'marginBottom:"16px"'}, ...[
-    h('span',{},'掌握 '+known+'/'+total),
-    h('div',{className:'progress-bar'},h('div',{className:'progress-fill',style:'width:'+pct+'%'})),
-    h('span',{},'生词 '+studyWords.length+' 个')
-  ].filter(Boolean));
+  let h = '';
 
-  let content;
+  // Tabs
+  h += '<div class="tabs">';
+  h += '<button class="tab'+(studyMode==='flashcard'?' active':'')+'" data-action="study-flashcard">🎴 卡片</button>';
+  h += '<button class="tab'+(studyMode==='quiz'?' active':'')+'" data-action="study-quiz">✅ 测验</button>';
+  h += '<button class="tab'+(studyMode==='list'?' active':'')+'" data-action="study-list">📋 列表</button>';
+  h += '</div>';
+
+  // Stats
+  h += '<div class="progress-wrap" style="margin-bottom:16px">';
+  h += '<span>掌握 '+known+'/'+total+'</span>';
+  h += '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+  h += '<span>生词 '+studyWords.length+' 个</span>';
+  h += '</div>';
+
   switch(studyMode){
-    case 'flashcard': content=renderFlashcard(); break;
-    case 'quiz': content=renderQuiz(); break;
-    case 'list': content=renderStudyList(); break;
+    case 'flashcard': h += renderFlashcardHTML(); break;
+    case 'quiz': h += renderQuizHTML(); break;
+    case 'list': h += renderStudyListHTML(); break;
   }
-  return h('div',{},tabs,stats,content);
+  return h;
 }
 
-// ===== STUDY: FLASHCARD =====
-function renderFlashcard(){
-  if(studyIndex>=studyWords.length) studyIndex=0;
-  const w=studyWords[studyIndex];
-  cardFlipped=false;
-
-  const fc=h('div',{className:'flashcard-wrap',onClick:()=>flipFC()},h('div',{className:'flashcard',id:'flashcardEl'}, ...[
-    h('div',{className:'fc-face fc-front'}, ...[
-      h('div',{className:'fc-word'},w.word),
-      h('div',{className:'fc-phonetic'},w.phonetic||''),
-      h('div',{className:'fc-hint'},'👆 点击或按空格翻转')
-    ].filter(Boolean)),
-    h('div',{className:'fc-face fc-back'}, ...[
-      h('div',{className:'fc-zh'},w.zh),
-      h('div',{className:'fc-en'},w.en),
-      w.example?h('div',{className:'fc-example'},'📝 '+w.example):null
-    ].filter(Boolean))
-  ].filter(Boolean)));
-
-  return h('div',{}, ...[
-    fc,
-    h('div',{className:'fc-nav'}, ...[
-      h('button',{className:'fc-nav-btn',onClick:(e)=>{e.stopPropagation();studyIndex=(studyIndex-1+studyWords.length)%studyWords.length;render();}},'◀'),
-      h('span',{className:'fc-counter'},(studyIndex+1)+'/'+studyWords.length),
-      h('button',{className:'fc-nav-btn',onClick:(e)=>{e.stopPropagation();studyIndex=(studyIndex+1)%studyWords.length;render();}},'▶'),
-    ].filter(Boolean)),
-    h('div',{className:'fc-actions'}, ...[
-      h('button',{className:'btn btn-outline btn-sm btn-know',onClick:()=>markStudyWord(true)},'✅ 已掌握'),
-      h('button',{className:'btn btn-outline btn-sm',onClick:()=>resetAllStudy(),style:'color:var(--orange);borderColor:var(--orange)'},'🔄 全部重学')
-    ].filter(Boolean)),
-    h('div',{className:'shortcuts'},'⌨ 空格翻卡  ←→ 切换  1=已掌握')
-  ].filter(Boolean));
+// ===== FLASHCARD =====
+function renderFlashcardHTML(){
+  if(studyIndex >= studyWords.length) studyIndex = 0;
+  const w = studyWords[studyIndex];
+  cardFlipped = false;
+  let h = '';
+  h += '<div class="flashcard-wrap" data-action="fc-flip">';
+  h += '<div class="flashcard" id="flashcardEl">';
+  h += '<div class="fc-face fc-front">';
+  h += '<div class="fc-word">'+esc(w.word)+'</div>';
+  h += '<div class="fc-phonetic">'+esc(w.phonetic||'')+'</div>';
+  h += '<div class="fc-hint">👆 点击或按空格翻转</div>';
+  h += '</div>';
+  h += '<div class="fc-face fc-back">';
+  h += '<div class="fc-zh">'+esc(w.zh)+'</div>';
+  h += '<div class="fc-en">'+esc(w.en)+'</div>';
+  if(w.example) h += '<div class="fc-example">📝 '+esc(w.example)+'</div>';
+  h += '</div></div></div>';
+  h += '<div class="fc-nav">';
+  h += '<button class="fc-nav-btn" data-action="fc-prev">◀</button>';
+  h += '<span class="fc-counter">'+(studyIndex+1)+'/'+studyWords.length+'</span>';
+  h += '<button class="fc-nav-btn" data-action="fc-next">▶</button>';
+  h += '</div>';
+  h += '<div class="fc-actions">';
+  h += '<button class="btn btn-outline btn-sm" data-action="fc-known" style="border-color:var(--green);color:var(--green)">✅ 已掌握</button>';
+  h += '<button class="btn btn-outline btn-sm" data-action="fc-reset-all" style="color:var(--orange);border-color:var(--orange)">🔄 全部重学</button>';
+  h += '</div>';
+  h += '<div class="shortcuts">⌨ 空格翻卡  ←→ 切换  1=已掌握</div>';
+  return h;
 }
 
 function flipFC(){
-  cardFlipped=!cardFlipped;
-  const el=document.getElementById('flashcardEl');
-  if(el) el.classList.toggle('flipped',cardFlipped);
+  cardFlipped = !cardFlipped;
+  const el = document.getElementById('flashcardEl');
+  if(el) el.classList.toggle('flipped', cardFlipped);
 }
 
 function markStudyWord(known){
-  if(known) studyWords[studyIndex].status='known';
-  const cur=studyWords[studyIndex];
-  studyWords.splice(studyIndex,1);
-  if(studyIndex>=studyWords.length) studyIndex=0;
+  if(known) studyWords[studyIndex].status = 'known';
+  studyWords.splice(studyIndex, 1);
+  if(studyIndex >= studyWords.length) studyIndex = 0;
+  cardFlipped = false;
   save();
-  if(studyWords.length===0) render();
-  else {cardFlipped=false;render();}
 }
 
 function resetAllStudy(){
   if(!confirm('确定将这个词库的所有单词重置为"不认识"吗？')) return;
-  const d=getDeck();
+  const d = getDeck();
   d.words.forEach(w=>w.status='unknown');
   save();
-  studyWords=d.words.filter(w=>w.status==='unknown');
-  studyIndex=0;
-  render();
+  studyWords = d.words.filter(w=>w.status==='unknown');
+  studyIndex = 0;
 }
 
-// ===== STUDY: QUIZ =====
+// ===== QUIZ =====
 function initQuiz(){
-  quizWords=[...studyWords].sort(()=>Math.random()-.5).slice(0,Math.min(20,studyWords.length));
-  quizIdx=0; quizCorrect=0; quizAnswered=false; quizCur=null; quizOpts=[];
+  quizWords = [...studyWords].sort(()=>Math.random()-.5).slice(0, Math.min(20, studyWords.length));
+  quizIdx = 0; quizCorrect = 0; quizAnswered = false; quizCur = null; quizOpts = [];
 }
 
-function renderQuiz(){
+function renderQuizHTML(){
   if(quizWords.length===0) initQuiz();
-  if(quizIdx>=quizWords.length) return renderQuizDone();
+  if(quizIdx >= quizWords.length){
+    const pct = quizWords.length>0?Math.round(quizCorrect/quizWords.length*100):0;
+    let emoji = pct>=90?'🎉':pct>=70?'👍':pct>=50?'📖':'💪';
+    studyWords = getDeck().words.filter(w=>w.status==='unknown');
+    let h = '<div class="card" style="text-align:center">';
+    h += '<div style="font-size:3rem">'+emoji+'</div><h2>测验完成！</h2>';
+    h += '<p>正确 '+quizCorrect+' / '+quizWords.length+' （'+pct+'%）</p>';
+    h += '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">';
+    h += '<button class="btn btn-primary" data-action="quiz-back-card">回到卡片</button>';
+    h += '<button class="btn btn-outline" data-action="quiz-retry">🔄 再来一轮</button>';
+    h += '</div></div>';
+    return h;
+  }
+  quizAnswered = false;
+  quizCur = quizWords[quizIdx];
+  const deckAll = getDeck().words.filter(w=>w.word!==quizCur.word);
+  const distractors = deckAll.sort(()=>Math.random()-.5).slice(0,3).map(w=>w.zh);
+  quizOpts = [...distractors, quizCur.zh].sort(()=>Math.random()-.5);
 
-  quizAnswered=false;
-  quizCur=quizWords[quizIdx];
-  const correct=quizCur.zh;
-  const deckAll=getDeck().words.filter(w=>w.word!==quizCur.word);
-  const distractors=deckAll.sort(()=>Math.random()-.5).slice(0,3).map(w=>w.zh);
-  quizOpts=[...distractors,correct].sort(()=>Math.random()-.5);
-
-  return h('div',{className:'quiz-wrap'}, ...[
-    h('div',{style:'textAlign:"center";color:"var(--text2)";fontSize:".85rem";marginBottom:"8px"'},'第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect),
-    h('div',{className:'quiz-q-word'},quizCur.word),
-    h('div',{className:'quiz-q-phonetic'},quizCur.phonetic||''),
-    h('div',{className:'quiz-opts'},...quizOpts.map((opt,i)=>
-      h('button',{className:'quiz-opt',onClick:()=>quizAnswer(i)},String.fromCharCode(65+i)+'. '+opt)
-    )),
-    h('div',{className:'quiz-fb',id:'quizFeedback'}),
-    h('button',{className:'btn btn-primary',id:'quizNext',style:'display:none;margin:12px auto 0',onClick:nextQuiz},'下一题 ▶')
-  ].filter(Boolean));
+  let h = '<div class="quiz-wrap">';
+  h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:8px">第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect+'</div>';
+  h += '<div class="quiz-q-word">'+esc(quizCur.word)+'</div>';
+  h += '<div class="quiz-q-phonetic">'+esc(quizCur.phonetic||'')+'</div>';
+  h += '<div class="quiz-opts">';
+  quizOpts.forEach((opt,i)=>{
+    h += '<button class="quiz-opt" data-action="quiz-answer" data-arg="'+i+'">'+(String.fromCharCode(65+i))+'. '+esc(opt)+'</button>';
+  });
+  h += '</div>';
+  h += '<div class="quiz-fb" id="quizFeedback"></div>';
+  h += '<button class="btn btn-primary" id="quizNext" data-action="quiz-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
+  h += '</div>';
+  return h;
 }
 
 function quizAnswer(idx){
   if(quizAnswered) return;
-  quizAnswered=true;
-  const correctZh=quizCur.zh;
-  const isCorrect=quizOpts[idx]===correctZh;
-  if(isCorrect) {quizCorrect++;quizCur.status='known';}
+  quizAnswered = true;
+  const correctZh = quizCur.zh;
+  const isCorrect = quizOpts[idx] === correctZh;
+  if(isCorrect){ quizCorrect++; quizCur.status='known'; }
+  save();
 
-  document.querySelectorAll('.quiz-opt').forEach((opt,i)=>{
-    opt.style.pointerEvents='none';
+  // Update DOM directly for feedback (avoids re-render)
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((opt,i)=>{
+    opt.style.pointerEvents = 'none';
     if(quizOpts[i]===correctZh) opt.classList.add('correct');
     else if(i===idx && !isCorrect) opt.classList.add('wrong');
   });
-
-  const fb=document.getElementById('quizFeedback');
-  fb.textContent=isCorrect?'✅ 正确！':'❌ 错误！正确答案是: '+correctZh;
-  fb.style.color=isCorrect?'var(--green)':'var(--red)';
-  document.getElementById('quizNext').style.display='';
-  save();
+  const fb = document.getElementById('quizFeedback');
+  fb.textContent = isCorrect?'✅ 正确！':'❌ 错误！正确答案是: '+correctZh;
+  fb.style.color = isCorrect?'var(--green)':'var(--red)';
+  document.getElementById('quizNext').style.display = '';
 }
 
-function nextQuiz(){quizIdx++;render();}
+function nextQuiz(){ quizIdx++; render(); }
 
-function renderQuizDone(){
-  const pct=quizWords.length>0?Math.round(quizCorrect/quizWords.length*100):0;
-  let emoji=pct>=90?'🎉':pct>=70?'👍':pct>=50?'📖':'💪';
-  studyWords=getDeck().words.filter(w=>w.status==='unknown');
-  return h('div',{className:'card',style:'textAlign:"center"'}, ...[
-    h('div',{style:'fontSize:"3rem"'},emoji),
-    h('h2',{},'测验完成！'),
-    h('p',{className:'quiz-score'},'正确 '+quizCorrect+' / '+quizWords.length+'（'+pct+'%）'),
-    h('div',{style:'display:"flex";gap:"8px";justifyContent:"center";marginTop:"12px";flexWrap:"wrap"'}, ...[
-      h('button',{className:'btn btn-primary',onClick:()=>{studyMode='flashcard';render();}},'回到卡片'),
-      h('button',{className:'btn btn-outline',onClick:()=>{initQuiz();render();}},'🔄 再来一轮'),
-    ].filter(Boolean))
-  ].filter(Boolean));
-}
-
-// ===== STUDY: LIST =====
-let studyListFilter='';
-function renderStudyList(){
-  let list=studyWords;
+// ===== STUDY LIST =====
+function renderStudyListHTML(){
+  let list = studyWords;
   if(studyListFilter){
-    const q=studyListFilter.toLowerCase();
-    list=list.filter(w=>w.word.includes(q)||w.zh.includes(q)||w.en.includes(q));
+    const q = studyListFilter.toLowerCase();
+    list = list.filter(w=>w.word.includes(q)||w.zh.includes(q)||w.en.includes(q));
   }
-  return h('div',{}, ...[
-    h('input',{className:'search-box',placeholder:'🔍 搜索生词...',value:studyListFilter,onInput:(e)=>{studyListFilter=e.target.value;render();}}),
-    h('p',{style:'fontSize:".85rem";color:"var(--text2)";marginBottom:"8px"'},'生词: '+list.length+' / '+studyWords.length),
-    h('div',{className:'table-wrap'},
-      h('table',{}, ...[
-        h('thead',{},h('tr',{},h('th',{},'单词'),h('th',{},'音标'),h('th',{},'中文释义'),h('th',{},'操作'))),
-        h('tbody',{},...list.map(w=>h('tr',{}, ...[
-          h('td',{className:'word-col'},w.word),
-          h('td',{style:'color:var(--text2);fontSize:".82rem"'},w.phonetic||''),
-          h('td',{className:'zh-col'},w.zh),
-          h('td',{},h('button',{className:'btn btn-sm btn-know',style:'padding:"4px 12px";fontSize:".75rem"',onClick:()=>{w.status='known';save();resetStudy();render();}},'✅ 掌握'))
-        ].filter(Boolean))))
-      ].filter(Boolean))
-    )
-  ].filter(Boolean));
+  let h = '<input class="search-box" id="studySearch" placeholder="🔍 搜索生词..." value="'+esc(studyListFilter)+'">';
+  h += '<p style="font-size:.85rem;color:var(--text2);margin-bottom:8px">生词: '+list.length+' / '+studyWords.length+'</p>';
+  h += '<div class="table-wrap"><table>';
+  h += '<thead><tr><th>单词</th><th>音标</th><th>中文释义</th><th>操作</th></tr></thead><tbody>';
+  list.forEach((w,i)=>{
+    h += '<tr>';
+    h += '<td class="word-col">'+esc(w.word)+'</td>';
+    h += '<td style="color:var(--text2);font-size:.82rem">'+esc(w.phonetic||'')+'</td>';
+    h += '<td class="zh-col">'+esc(w.zh)+'</td>';
+    h += '<td><button class="btn btn-sm" data-action="sl-known" data-arg="'+studyWords.indexOf(w)+'" style="background:var(--green);color:#fff;padding:4px 12px;font-size:.75rem;border-radius:12px">✅ 掌握</button></td>';
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+function setupSearchInput(){
+  const inp = document.getElementById('studySearch');
+  if(inp) inp.addEventListener('input', function(){ studyListFilter = this.value; render(); });
+}
+
+function markStudyListWord(idx){
+  if(idx>=0 && idx<studyWords.length){
+    studyWords[idx].status = 'known';
+    save();
+    studyWords = getDeck().words.filter(w=>w.status==='unknown');
+  }
 }
 
 // ===================== KEYBOARD =====================
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown', function(e){
   if(currentView==='review'){
-    if(e.key==='1'){e.preventDefault();reviewAnswer(true);}
-    else if(e.key==='2'){e.preventDefault();reviewAnswer(false);}
-    else if(e.key==='ArrowLeft'&&reviewIndex>0){e.preventDefault();reviewIndex--;render();}
+    if(e.key==='1'){ e.preventDefault(); reviewAnswer(true); render(); }
+    else if(e.key==='2'){ e.preventDefault(); reviewAnswer(false); render(); }
+    else if(e.key==='ArrowLeft' && reviewIndex>0){ e.preventDefault(); reviewIndex--; render(); }
   }
-  if(currentView==='study'&&studyMode==='flashcard'){
-    if((e.key===' '||e.code==='Space')&&studyWords.length>0){e.preventDefault();flipFC();}
-    else if(e.key==='ArrowLeft'){e.preventDefault();studyIndex=(studyIndex-1+studyWords.length)%studyWords.length;render();}
-    else if(e.key==='ArrowRight'){e.preventDefault();studyIndex=(studyIndex+1)%studyWords.length;render();}
-    else if(e.key==='1'){e.preventDefault();markStudyWord(true);}
+  if(currentView==='study' && studyMode==='flashcard' && studyWords.length>0){
+    if(e.key===' ' || e.code==='Space'){ e.preventDefault(); flipFC(); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); studyIndex=(studyIndex-1+studyWords.length)%studyWords.length; cardFlipped=false; render(); }
+    else if(e.key==='ArrowRight'){ e.preventDefault(); studyIndex=(studyIndex+1)%studyWords.length; cardFlipped=false; render(); }
+    else if(e.key==='1'){ e.preventDefault(); markStudyWord(true); render(); }
   }
-  if(currentView==='study'&&studyMode==='quiz'&&!quizAnswered&&quizCur){
-    if(e.key==='a'||e.key==='A') quizAnswer(0);
-    if(e.key==='b'||e.key==='B') quizAnswer(1);
-    if(e.key==='c'||e.key==='C') quizAnswer(2);
-    if(e.key==='d'||e.key==='D') quizAnswer(3);
+  if(currentView==='study' && studyMode==='quiz' && !quizAnswered && quizCur){
+    const map = {a:0,b:1,c:2,d:3,'A':0,'B':1,'C':2,'D':3};
+    if(e.key in map){ e.preventDefault(); quizAnswer(map[e.key]); }
   }
-  if(currentView==='study'&&studyMode==='quiz'&&quizAnswered&&e.key==='Enter') nextQuiz();
+  if(currentView==='study' && studyMode==='quiz' && quizAnswered && e.key==='Enter'){ e.preventDefault(); nextQuiz(); }
 });
 
 // ===================== INIT =====================
