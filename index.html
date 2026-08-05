@@ -309,8 +309,8 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'fc-known': markStudyWord(true); break;
     case 'fc-reset-all': resetAllStudy(); break;
     // Quiz
-    case 'quiz-answer': quizAnswer(parseInt(arg)); break;
-    case 'quiz-next': nextQuiz(); break;
+    case 'quiz-answer': quizAnswer(parseInt(arg)); return; // quizAnswer updates DOM directly
+    case 'quiz-next': nextQuiz(); return; // nextQuiz calls render() internally
     case 'quiz-retry': initQuiz(); render(); break;
     case 'quiz-back-card': studyMode='flashcard'; render(); break;
     // Study list
