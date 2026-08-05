@@ -833,7 +833,7 @@ function renderSpellHTML(){
   if(w.en) h += '<div class="spell-en-hint">'+esc(w.en)+'</div>';
   h += '<div class="spell-input-row">';
   h += '<input class="spell-input" id="spellInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词...">';
-  h += '<button class="btn btn-primary" data-action="spell-check">检查</button>';
+  h += '<button type="button" class="btn btn-primary" data-action="spell-check">检查</button>';
   h += '</div>';
   h += '<div class="spell-fb" id="spellFeedback"></div>';
   h += '<button class="btn btn-primary" id="spellNext" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
@@ -883,7 +883,7 @@ document.addEventListener('keydown', function(e){
   }
   if(currentView==='study' && studyMode==='quiz' && quizAnswered && e.key==='Enter'){ e.preventDefault(); nextQuiz(); }
   if(currentView==='study' && studyMode==='spell' && spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpelling(); }
-  if(currentView==='study' && studyMode==='spell' && spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
+  else if(currentView==='study' && studyMode==='spell' && spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
 });
 
 // ===================== AUDIO =====================
