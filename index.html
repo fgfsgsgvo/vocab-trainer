@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VocabTrainer — 背单词</title>
+<style>
+:root {
+  --bg:#f5f5fb; --surface:#fff; --text:#1a1a2e; --text2:#6b7280;
+  --border:#e5e7eb; --accent:#4f46e5; --accent-l:#eef2ff;
+  --green:#10b981; --red:#ef4444; --orange:#f59e0b;
+  --shadow:0 2px 16px rgba(0,0,0,.06); --shadow-lg:0 8px 32px rgba(0,0,0,.1);
+  --radius:14px; --radius-sm:10px;
+}
+body.dark {
+  --bg:#0f172a; --surface:#1e293b; --text:#e2e8f0; --text2:#94a3b8;
+  --border:#334155; --accent-l:#1e1b4b;
+  --shadow:0 2px 16px rgba(0,0,0,.3); --shadow-lg:0 8px 32px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg); color:var(--text); min-height:100vh; transition:background .3s,color .3s;
+}
+button{cursor:pointer; font-family:inherit;}
+
+/* ===== LAYOUT ===== */
+.app{max-width:780px;margin:0 auto;padding:16px;}
+
+/* Header */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 0 16px;flex-wrap:wrap;
+}
+.app-header h1{font-size:1.3rem;font-weight:700;white-space:nowrap;}
+.header-right{display:flex;gap:8px;align-items:center;}
+.theme-btn{
+  width:36px;height:36px;border-radius:50%;border:2px solid var(--border);
+  background:var(--surface);font-size:1rem;display:flex;align-items:center;
+  justify-content:center;transition:.2s;
+}
+.theme-btn:hover{border-color:var(--accent);}
+
+/* Breadcrumb */
+.breadcrumb{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--text2);margin-bottom:16px;flex-wrap:wrap;}
+.breadcrumb a{color:var(--accent);text-decoration:none;cursor:pointer;font-weight:500;}
+.breadcrumb a:hover{text-decoration:underline;}
+.breadcrumb span{opacity:.6;}
+
+/* ===== CARDS / PANELS ===== */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px;box-shadow:var(--shadow);margin-bottom:16px;
+}
+.card h2{font-size:1.1rem;margin-bottom:12px;}
+
+/* ===== BUTTONS ===== */
+.btn{
+  padding:9px 20px;border-radius:22px;border:none;font-size:.9rem;font-weight:600;
+  transition:all .2s;display:inline-flex;align-items:center;gap:6px;
+}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);}
+.btn-outline{background:var(--surface);color:var(--text);border:2px solid var(--border);}
+.btn-outline:hover{border-color:var(--accent);background:var(--accent-l);}
+.btn-sm{padding:6px 14px;font-size:.8rem;border-radius:18px;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-danger:hover{opacity:.85;}
+
+/* ===== DECK LIST ===== */
+.deck-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap;transition:.2s;
+  box-shadow:var(--shadow);
+}
+.deck-card:hover{border-color:var(--accent);}
+.deck-info{flex:1;min-width:0;}
+.deck-info h3{font-size:1rem;font-weight:600;margin-bottom:4px;}
+.deck-meta{font-size:.8rem;color:var(--text2);display:flex;gap:12px;flex-wrap:wrap;}
+.deck-actions{display:flex;gap:8px;}
+
+/* Progress pill */
+.progress-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--accent-l);color:var(--accent);padding:3px 10px;
+  border-radius:12px;font-size:.75rem;font-weight:600;
+}
+
+/* ===== IMPORT ZONE ===== */
+.import-zone{
+  border:2px dashed var(--border);border-radius:var(--radius);padding:32px 24px;
+  text-align:center;cursor:pointer;transition:.2s;margin-bottom:16px;
+  background:var(--surface);
+}
+.import-zone:hover,.import-zone.dragover{border-color:var(--accent);background:var(--accent-l);}
+.import-zone p{color:var(--text2);font-size:.9rem;margin-top:8px;}
+.import-zone .icon{font-size:2.5rem;}
+
+.paste-area{display:none;margin-top:12px;}
+.paste-area.show{display:block;}
+.paste-area textarea{
+  width:100%;height:120px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:12px;font-size:.85rem;font-family:monospace;resize:vertical;
+  background:var(--surface);color:var(--text);
+}
+
+/* ===== REVIEW MODE ===== */
+.review-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);padding:32px 24px;text-align:center;
+  max-width:480px;margin:0 auto;
+}
+.review-card .big-word{font-size:2.6rem;font-weight:800;margin-bottom:8px;}
+.review-card .phonetic{font-size:1.1rem;color:var(--text2);margin-bottom:24px;}
+.review-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.review-actions .btn{padding:14px 36px;font-size:1rem;border-radius:28px;}
+.review-actions .btn-know{background:var(--green);color:#fff;border:none;}
+.review-actions .btn-know:hover{opacity:.9;}
+.review-actions .btn-dunno{background:var(--red);color:#fff;border:none;}
+.review-actions .btn-dunno:hover{opacity:.9;}
+.review-progress{margin-top:20px;}
+
+/* Progress bar */
+.progress-wrap{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--text2);}
+.progress-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;}
+
+/* ===== STUDY / FLASHCARD ===== */
+.flashcard-wrap{perspective:1200px;cursor:pointer;max-width:480px;margin:0 auto;user-select:none;}
+.flashcard{
+  width:100%;aspect-ratio:1.35;position:relative;transform-style:preserve-3d;
+  transition:transform .5s cubic-bezier(.4,0,.2,1);
+}
+.flashcard.flipped{transform:rotateY(180deg);}
+.fc-face{
+  position:absolute;inset:0;border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);
+  box-shadow:var(--shadow-lg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:28px;backface-visibility:hidden;
+}
+.fc-back{transform:rotateY(180deg);}
+.fc-word{font-size:2.4rem;font-weight:800;margin-bottom:6px;}
+.fc-phonetic{font-size:1rem;color:var(--text2);margin-bottom:6px;}
+.fc-hint{font-size:.75rem;color:var(--text2);opacity:.5;margin-top:12px;}
+.fc-zh{font-size:1.2rem;font-weight:600;margin-bottom:10px;text-align:center;line-height:1.5;}
+.fc-en{font-size:.9rem;color:var(--text2);margin-bottom:10px;text-align:center;font-style:italic;}
+.fc-example{font-size:.85rem;color:var(--accent);text-align:center;line-height:1.5;}
+
+.fc-nav{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:16px;}
+.fc-nav-btn{
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--border);
+  background:var(--surface);font-size:1.1rem;color:var(--text);
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.fc-nav-btn:hover{border-color:var(--accent);background:var(--accent-l);}
+.fc-counter{font-size:.85rem;color:var(--text2);min-width:56px;text-align:center;}
+
+.fc-actions{display:flex;gap:10px;justify-content:center;margin-top:12px;}
+.fc-actions .btn-know{border-color:var(--green);color:var(--green);}
+.fc-actions .btn-know:hover,.fc-actions .btn-know.active{background:var(--green);color:#fff;}
+.fc-actions .btn-dunno{border-color:var(--red);color:var(--red);}
+.fc-actions .btn-dunno:hover,.fc-actions .btn-dunno.active{background:var(--red);color:#fff;}
+
+/* ===== QUIZ ===== */
+.quiz-wrap{max-width:500px;margin:0 auto;}
+.quiz-q-word{font-size:2.2rem;font-weight:800;text-align:center;padding:12px;}
+.quiz-q-phonetic{font-size:1rem;color:var(--text2);text-align:center;margin-bottom:16px;}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;}
+.quiz-opt{
+  padding:12px 18px;border-radius:var(--radius-sm);border:2px solid var(--border);
+  background:var(--surface);font-size:.95rem;text-align:left;transition:.2s;
+}
+.quiz-opt:hover{border-color:var(--accent);background:var(--accent-l);}
+.quiz-opt.correct{border-color:var(--green)!important;background:#d1fae5!important;}
+.quiz-opt.wrong{border-color:var(--red)!important;background:#fee2e2!important;}
+.quiz-fb{text-align:center;font-size:1rem;font-weight:600;min-height:26px;margin-top:10px;}
+
+/* ===== WORD TABLE ===== */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.88rem;}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);}
+th{background:var(--accent-l);color:var(--accent);font-weight:600;white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+td.word-col{font-weight:700;white-space:nowrap;}
+td.zh-col{line-height:1.4;}
+
+.search-box{
+  width:100%;padding:10px 14px;border-radius:20px;border:2px solid var(--border);
+  background:var(--surface);font-size:.9rem;color:var(--text);outline:none;
+  margin-bottom:12px;transition:.2s;
+}
+.search-box:focus{border-color:var(--accent);}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:3px;background:var(--border);border-radius:22px;padding:3px;}
+.tab{
+  padding:7px 16px;border-radius:20px;border:none;background:transparent;
+  font-size:.85rem;color:var(--text2);font-weight:500;transition:.2s;
+}
+.tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.tab:hover:not(.active){color:var(--text);}
+
+/* ===== MODAL OVERLAY ===== */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;
+  align-items:center;justify-content:center;z-index:100;padding:16px;
+}
+.modal{
+  background:var(--surface);border-radius:var(--radius);padding:24px;
+  max-width:500px;width:100%;box-shadow:var(--shadow-lg);
+}
+.modal h3{margin-bottom:12px;}
+.modal .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+
+/* ===== SHORTCUTS ===== */
+.shortcuts{text-align:center;font-size:.78rem;color:var(--text2);padding:12px 0;opacity:.7;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:500px){
+  .review-card .big-word{font-size:2rem;}
+  .fc-word{font-size:1.8rem;}
+  .quiz-q-word{font-size:1.7rem;}
+  .deck-card{flex-direction:column;align-items:stretch;}
+  .deck-actions{justify-content:flex-end;}
+  .btn{padding:8px 16px;font-size:.85rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- dynamically rendered -->
+</div>
+
+<script>
+// ===================== PRESET DATA =====================
+const PRESET_WORDS = [
+  {word:"smuggle",phonetic:"/ˈsmʌɡ(ə)l/",zh:"vt. 走私；偷运",en:"import or export without paying customs duties",example:"They deny conspiring together to smuggle drugs."},
+  {word:"flourish",phonetic:"/ˈflʌrɪʃ/",zh:"v. 繁荣，茂盛；茁壮成长；挥舞；炫耀",en:"a showy gesture",example:"He opened the door for her with a flourish."},
+  {word:"reserve",phonetic:"/rɪˈzɜːv/",zh:"v. 预订；储备；留出；n. 储备量；自然保护区；预备队",en:"formality and propriety of manner",example:"I'll reserve a table for five."},
+  {word:"dimensional",phonetic:"/daɪˈmenʃən(ə)l/",zh:"adj. 空间的；尺寸的",en:"of or relating to dimensions",example:"This is a three-dimensional crystal."},
+  {word:"gravel",phonetic:"/ˈɡræv(ə)l/",zh:"n. 碎石；砂砾",en:"rock fragments and pebbles",example:"The car drew up with a crunch of gravel."},
+  {word:"insulation",phonetic:"/ˌɪnsjuˈleɪʃ(ə)n/",zh:"n. 绝缘；隔离，孤立",en:"the state of being isolated or detached",example:"Better insulation of your home will help to reduce heating bills."},
+  {word:"improvise",phonetic:"/ˈɪmprəvaɪz/",zh:"vt. 即兴创作；即兴表演；临时凑合",en:"perform without preparation",example:"There isn't much equipment. We're going to have to improvise."},
+  {word:"hesitation",phonetic:"/ˌhezɪˈteɪʃn/",zh:"n. 犹豫",en:"indecision in speech or action",example:"She agreed without the slightest hesitation."},
+  {word:"undermine",phonetic:"/ˌʌndəˈmaɪn/",zh:"vt. 破坏，渐渐破坏；挖掘地基",en:"destroy property or hinder normal operations",example:"He accused me of slandering him and trying to undermine his position."},
+  {word:"eliminate",phonetic:"/ɪˈlɪmɪneɪt/",zh:"vt. 消除；排除",en:"terminate or take out",example:"This diet claims to eliminate toxins from the body."},
+  {word:"exclude",phonetic:"/ɪkˈskluːd/",zh:"vt. 排除；排斥；拒绝接纳；逐出",en:"prevent from being included or considered or accepted",example:"She gets very upset if I exclude her from anything."},
+  {word:"laundry",phonetic:"/ˈlɔːndri/",zh:"n. 洗衣店，洗衣房；要洗的衣服",en:"garments or white goods that can be cleaned by laundering",example:"He worked in the laundry at Oxford prison."},
+  {word:"apparently",phonetic:"/əˈpærəntli/",zh:"adv. 显然地；似乎，表面上",en:"from appearances alone",example:"He paused, apparently lost in thought."},
+  {word:"gelatin",phonetic:"/ˈdʒelətɪn/",zh:"n. 明胶；动物胶；胶制品",en:"a colorless water-soluble glutinous protein obtained from animal tissues",example:"Gelatin has a long history of use as a gelling agent by the food industry."},
+  {word:"stimulate",phonetic:"/ˈstɪmjuleɪt/",zh:"vt. 刺激；鼓舞，激励",en:"act as a stimulant",example:"These businesses stimulate the creation of local jobs."},
+  {word:"fuel",phonetic:"/ˈfjuːəl/",zh:"n. 燃料；刺激因素；vt. 给…提供燃料；煽动",en:"a substance that can be consumed to produce energy",example:"The boiler uses solid fuel."},
+  {word:"operational",phonetic:"/ˌɒpəˈreɪʃən(ə)l/",zh:"adj. 操作的；运作的",en:"pertaining to a process or series of actions for achieving a result",example:"The new airport is now fully operational."},
+  {word:"distribute",phonetic:"/dɪˈstrɪbjuːt/",zh:"vt. 分配；散布；分开；把…分类",en:"administer or bestow, as in small portions",example:"Aid workers helped distribute corn, milk and other staples."},
+  {word:"intend",phonetic:"/ɪnˈtend/",zh:"vt. 打算；想要；意指",en:"have in mind as a purpose",example:"I don't intend staying long."},
+  {word:"empirical",phonetic:"/ɪmˈpɪrɪk(ə)l/",zh:"adj. 经验主义的，完全根据经验的；实证的",en:"derived from experiment and observation rather than theory",example:"There is no empirical evidence to support his thesis."},
+  {word:"probation",phonetic:"/prəˈbeɪʃ(ə)n/",zh:"n. 试用；缓刑；查验",en:"a trial period during which your character and abilities are tested",example:"He was given two years' probation."},
+  {word:"depression",phonetic:"/dɪˈpreʃn/",zh:"n. 沮丧；抑郁症；洼地；不景气；低气压区",en:"a mental state characterized by a pessimistic sense of inadequacy",example:"Depression is treatable."},
+  {word:"proximity",phonetic:"/prɒkˈsɪməti/",zh:"n. 接近，邻近；接近度，距离",en:"the property of being close together",example:"He became aware of the proximity of the Afghans."},
+  {word:"attention",phonetic:"/əˈtenʃ(ə)n/",zh:"n. 注意力；关心；立正！（口令）",en:"the process whereby a person concentrates on some features of the environment",example:"My shoes caught his attention."},
+  {word:"factual",phonetic:"/ˈfæktʃuəl/",zh:"adj. 事实的；真实的",en:"existing in act or fact",example:"The essay contains a number of factual errors."},
+  {word:"acclaim",phonetic:"/əˈkleɪm/",zh:"v. 称赞；为……喝彩，向……欢呼",en:"enthusiastic approval",example:"The novel received great acclaim."},
+  {word:"carry",phonetic:"/ˈkæri/",zh:"vt. 拿，扛；携带；支持；搬运",en:"move while supporting",example:"He was carrying a large bag."},
+  {word:"devastate",phonetic:"/ˈdevəsteɪt/",zh:"vt. 毁灭；毁坏",en:"cause extensive destruction or ruin utterly",example:"The city was devastated by the earthquake."},
+  {word:"response",phonetic:"/rɪˈspɒns/",zh:"n. 响应；反应；回答",en:"a bodily process occurring due to the effect of some stimulus or agent",example:"His response was immediate."},
+  {word:"dull",phonetic:"/dʌl/",zh:"adj. 钝的；迟钝的；无趣的；呆滞的；阴暗的",en:"lacking in liveliness or animation",example:"The lecture was dull and boring."},
+  {word:"basis",phonetic:"/ˈbeɪsɪs/",zh:"n. 基础；底部；主要成分；基本原则或原理",en:"the fundamental assumptions from which something is begun",example:"We meet on a regular basis."},
+  {word:"tropical",phonetic:"/ˈtrɒpɪk(ə)l/",zh:"adj. 热带的；热情的；酷热的",en:"relating to or situated in the tropics",example:"They enjoy the tropical climate."},
+  {word:"rumour",phonetic:"/ˈruːmə(r)/",zh:"n. 谣言",en:"gossip passed around by word of mouth",example:"I heard a rumour that she's leaving."},
+  {word:"endeavour",phonetic:"/ɪnˈdevə(r)/",zh:"v. 努力，尽力",en:"attempt by employing effort",example:"We will endeavour to finish on time."},
+  {word:"address",phonetic:"/əˈdres/",zh:"n. 地址；演讲；称呼；v. 处理；演说",en:"the place where a person or organization can be found",example:"Please write your address clearly."},
+  {word:"payment",phonetic:"/ˈpeɪmənt/",zh:"n. 付款，支付；报酬；偿还",en:"a sum of money paid or a claim discharged",example:"Payment must be made in advance."},
+  {word:"superb",phonetic:"/suːˈpɜːb/",zh:"adj. 极好的；华丽的；宏伟的",en:"of surpassing excellence",example:"The food was superb."},
+  {word:"intention",phonetic:"/ɪnˈtenʃ(ə)n/",zh:"n. 意图；目的；意向",en:"an anticipated outcome that is intended or that guides your planned actions",example:"I have no intention of leaving."},
+  {word:"demonstrate",phonetic:"/ˈdemənstreɪt/",zh:"vt. 证明；展示；论证",en:"give an exhibition of to an interested audience",example:"The study demonstrates the link between poverty and malnutrition."},
+  {word:"agenda",phonetic:"/əˈdʒendə/",zh:"n. 议程；日常工作事项；日程表",en:"a list of matters to be taken up",example:"The next item on the agenda is the budget."},
+  {word:"illuminate",phonetic:"/ɪˈluːmɪneɪt/",zh:"vt. 阐明，说明；照亮；使灿烂",en:"make lighter or brighter",example:"The room was illuminated by candles."},
+  {word:"slim",phonetic:"/slɪm/",zh:"adj. 苗条的；修长的；微小的；差的",en:"being of delicate or slender build",example:"She has a slim figure."},
+  {word:"warrant",phonetic:"/ˈwɒrənt/",zh:"n. 根据；证明；正当理由；委任状",en:"a writ from a court commanding police to perform specified acts",example:"Police issued a warrant for his arrest."},
+  {word:"optimism",phonetic:"/ˈɒptɪmɪz(ə)m/",zh:"n. 乐观；乐观主义",en:"the optimistic feeling that all is going to turn out well",example:"There are grounds for cautious optimism."},
+  {word:"rank",phonetic:"/ræŋk/",zh:"n. 排；等级；军衔；队列",en:"relative status",example:"She achieved the rank of colonel."},
+  {word:"avail",phonetic:"/əˈveɪl/",zh:"v. 有助于；（使）对某人有利",en:"a means of serving",example:"All our efforts availed us little."},
+  {word:"block",phonetic:"/blɒk/",zh:"n. 块；街区；大厦；障碍物",en:"a solid piece of something",example:"There's a post office just around the block."},
+  {word:"administrative",phonetic:"/ədˈmɪnɪstrətɪv/",zh:"adj. 管理的，行政的",en:"of or relating to or responsible for administration",example:"She works in an administrative role."},
+  {word:"frustrating",phonetic:"/frʌˈstreɪtɪŋ/",zh:"adj. 令人沮丧的",en:"discouraging by hindering",example:"It's frustrating when you can't remember a word."},
+  {word:"resistant",phonetic:"/rɪˈzɪstənt/",zh:"adj. 抵抗的，反抗的；顽固的",en:"relating to or conferring immunity",example:"These plants are resistant to drought."},
+  {word:"overdue",phonetic:"/ˌəʊvəˈdjuː/",zh:"adj. 过期的；迟到的；未兑的",en:"past due; not paid at the scheduled time",example:"The library books are overdue."},
+  {word:"impressive",phonetic:"/ɪmˈpresɪv/",zh:"adj. 感人的；令人钦佩的；给人以深刻印象的",en:"making a strong or vivid impression",example:"The performance was impressive."},
+  {word:"analysis",phonetic:"/əˈnæləsɪs/",zh:"n. 分析；分解；验定",en:"an investigation of the component parts of a whole",example:"We carried out a detailed analysis."},
+  {word:"verdict",phonetic:"/ˈvɜːdɪkt/",zh:"n. 结论；裁定",en:"findings of a jury on issues of fact for decision",example:"The jury returned a verdict of not guilty."},
+  {word:"refresher",phonetic:"/rɪˈfreʃə(r)/",zh:"n. 可提神的人或物；补习课程；清凉饮料",en:"a course that reviews and updates a topic",example:"I took a refresher course in French."},
+  {word:"blaze",phonetic:"/bleɪz/",zh:"v. 燃烧；发光；怒视；宣扬",en:"a strong flame that burns brightly",example:"The fire blazed all night."},
+  {word:"misjudge",phonetic:"/ˌmɪsˈdʒʌdʒ/",zh:"vi. 判断错",en:"judge incorrectly",example:"I misjudged the distance and fell short."},
+  {word:"pregnant",phonetic:"/ˈpreɡnənt/",zh:"adj. 怀孕的；富有意义的",en:"carrying developing offspring within the body",example:"She is six months pregnant."},
+  {word:"unyielding",phonetic:"/ʌnˈjiːldɪŋ/",zh:"adj. 不屈的；坚强的；不易弯曲的",en:"stubbornly unyielding",example:"He faced the challenge with unyielding determination."},
+  {word:"exterior",phonetic:"/ɪkˈstɪəriə(r)/",zh:"adj. 外部的，外面的，外在的；外界的",en:"the region that is outside of something",example:"The exterior of the building was impressive."},
+  {word:"approve",phonetic:"/əˈpruːv/",zh:"vt. 批准；赞成；为…提供证据",en:"give sanction to",example:"The committee approved the plan."},
+  {word:"client",phonetic:"/ˈklaɪənt/",zh:"n. 客户；顾客；委托人",en:"someone who pays for goods or services",example:"Our clients include several major companies."},
+  {word:"vernacular",phonetic:"/vəˈnækjʊlə(r)/",zh:"adj. 本国的；地方的；用本地语写成的",en:"the everyday speech of the people",example:"He wrote in the vernacular."},
+  {word:"compare",phonetic:"/kəmˈpeə(r)/",zh:"v. 比较，对比；与……类似",en:"examine and note the similarities or differences of",example:"Compare the two versions carefully."},
+  {word:"transparent",phonetic:"/trænsˈpærənt/",zh:"adj. 透明的；显然的；坦率的；易懂的",en:"transmitting light; able to be seen through with clarity",example:"The glass was completely transparent."},
+  {word:"deputy",phonetic:"/ˈdepjuti/",zh:"n. 代理人，代表",en:"a person appointed to represent or act on behalf of others",example:"He was appointed deputy headteacher."},
+  {word:"fraud",phonetic:"/frɔːd/",zh:"n. 欺骗；骗子；诡计",en:"intentional deception resulting in injury to another person",example:"He was convicted of fraud."},
+  {word:"bind",phonetic:"/baɪnd/",zh:"vi. 结合；装订；有约束力；过紧",en:"stick to firmly",example:"Add an egg to bind the mixture."},
+  {word:"fragrance",phonetic:"/ˈfreɪɡrəns/",zh:"n. 香味，芬芳",en:"a distinctive odor that is pleasant",example:"The fragrance of roses filled the room."},
+  {word:"acute",phonetic:"/əˈkjuːt/",zh:"adj. 严重的，急性的；敏锐的；激烈的；尖声的",en:"demonstrating ability to recognize or draw fine distinctions",example:"He has acute hearing."},
+  {word:"image",phonetic:"/ˈɪmɪdʒ/",zh:"n. 影像；想象；肖像；偶像",en:"a visual representation produced on a surface",example:"The image was clear and sharp."}
+];
+
+// ===================== STORAGE =====================
+const LS_DECKS = 'vt_decks';
+const LS_SETTINGS = 'vt_settings';
+
+function loadDecks(){
+  try{return JSON.parse(localStorage.getItem(LS_DECKS))||{};}catch(e){return{};}
+}
+function saveDecks(d){localStorage.setItem(LS_DECKS,JSON.stringify(d));}
+function loadSettings(){
+  try{return JSON.parse(localStorage.getItem(LS_SETTINGS))||{};}catch(e){return{};}
+}
+function saveSettings(s){localStorage.setItem(LS_SETTINGS,JSON.stringify(s));}
+
+function ensurePreset(){
+  const decks = loadDecks();
+  if(Object.keys(decks).length===0){
+    const id = 'preset-list7';
+    decks[id] = {
+      id, title:'雅思词汇（完整版）(List 7)', createdAt:Date.now(),
+      words: PRESET_WORDS.map(w=>({...w,status:'unknown'}))
+    };
+    saveDecks(decks);
+  }
+}
+
+// ===================== APP STATE =====================
+let decks = {};
+let currentView = 'decks'; // decks | review | study | import-preview
+let activeDeckId = null;
+let reviewIndex = 0;
+let reviewWords = [];
+let studyIndex = 0;
+let studyWords = [];
+let cardFlipped = false;
+let studyMode = 'flashcard'; // flashcard | quiz | list
+
+// Quiz state
+let quizWords=[], quizIdx=0, quizCorrect=0, quizAnswered=false;
+let quizCur=null, quizOpts=[];
+
+function getDeck(){
+  return decks[activeDeckId];
+}
+function save(){saveDecks(decks);}
+
+// ===================== RENDER ENGINE =====================
+const app = document.getElementById('app');
+
+function h(tag,attrs,...children){
+  const el = document.createElement(tag);
+  if(attrs){
+    for(const[k,v] of Object.entries(attrs)){
+      if(k==='className') el.className=v;
+      else if(k.startsWith('on')&&typeof v==='function') el.addEventListener(k.slice(2),v);
+      else el.setAttribute(k,v);
+    }
+  }
+  for(const c of children){
+    if(c==null)continue;
+    el.append(typeof c==='string'?document.createTextNode(c):c);
+  }
+  return el;
+}
+
+function render(){
+  app.innerHTML='';
+  const settings = loadSettings();
+  const isDark = settings.theme==='dark';
+  if(isDark) document.body.classList.add('dark');
+  else document.body.classList.remove('dark');
+
+  app.append(
+    h('div',{className:'app-header'}, ...[
+      h('h1',{},'📚 VocabTrainer'),
+      h('div',{className:'header-right'}, ...[
+        currentView!=='decks'?h('button',{className:'btn btn-outline btn-sm',onClick:()=>{currentView='decks';render();}},'🏠 词库'):null,
+        h('button',{className:'theme-btn',onClick:toggleTheme},isDark?'☀️':'🌙')
+      ].filter(Boolean))
+    ].filter(Boolean)),
+    renderBreadcrumb(),
+    renderMain()
+  );
+}
+
+function toggleTheme(){
+  const s=loadSettings();
+  s.theme=s.theme==='dark'?'light':'dark';
+  saveSettings(s);
+  render();
+}
+
+function renderBreadcrumb(){
+  const parts=[h('a',{onClick:()=>{currentView='decks';activeDeckId=null;render();}},'词库列表')];
+  if(activeDeckId&&currentView!=='decks'){
+    const d=getDeck();
+    if(currentView==='review') parts.push(h('span',{},'›'),h('a',{onClick:()=>{currentView='review';resetReview();render();}},d.title),h('span',{},'› 筛查'));
+    else if(currentView==='study') parts.push(h('span',{},'›'),h('a',{onClick:()=>{currentView='study';resetStudy();render();}},d.title),h('span',{},'› 背生词'));
+    else if(currentView==='import-preview') parts.push(h('span',{},'›'),h('span',{},'导入预览'));
+  }
+  return h('div',{className:'breadcrumb'},...parts);
+}
+
+function renderMain(){
+  switch(currentView){
+    case 'decks': return renderDecks();
+    case 'review': return renderReview();
+    case 'study': return renderStudy();
+    case 'import-preview': return renderImportPreview();
+    default: return h('p',{},'...');
+  }
+}
+
+// ===================== DECKS VIEW =====================
+function renderDecks(){
+  decks=loadDecks();
+  const list=Object.values(decks).sort((a,b)=>b.createdAt-a.createdAt);
+  const children=[
+    h('h2',{},'📦 导入词库'),
+    renderImportZone()
+  ];
+  if(list.length>0){
+    children.push(h('h2',{style:'margin-top:20px'},'📋 我的词库 ('+list.length+')'));
+    for(const d of list){
+      const known=d.words.filter(w=>w.status==='known').length;
+      const total=d.words.length;
+      const pct=total>0?Math.round(known/total*100):0;
+      children.push(
+        h('div',{className:'deck-card'}, ...[
+          h('div',{className:'deck-info'}, ...[
+            h('h3',{},d.title),
+            h('div',{className:'deck-meta'}, ...[
+              h('span',{},total+' 个单词'),
+              h('span',{className:'progress-pill'},'✅ '+known+' / '+total+' ('+pct+'%)')
+            ].filter(Boolean))
+          ].filter(Boolean)),
+          h('div',{className:'deck-actions'}, ...[
+            h('button',{className:'btn btn-primary btn-sm',onClick:()=>startReview(d.id)},'🔍 筛查'),
+            h('button',{className:'btn btn-outline btn-sm',onClick:()=>startStudy(d.id)},'📖 背生词'),
+            h('button',{className:'btn btn-outline btn-sm',onClick:()=>deleteDeck(d.id),style:'color:var(--red);border-color:var(--red)'},'🗑')
+          ].filter(Boolean))
+        ].filter(Boolean))
+      );
+    }
+  }
+  return h('div',{},...children);
+}
+
+function deleteDeck(id){
+  if(!confirm('确定删除这个词库吗？此操作不可撤销。')) return;
+  decks=loadDecks();
+  delete decks[id];
+  saveDecks(decks);
+  render();
+}
+
+// ===================== IMPORT =====================
+function renderImportZone(){
+  const zone = h('div',{className:'import-zone',onClick:()=>document.getElementById('fileInput').click()}, ...[
+    h('div',{className:'icon'},'📂'),
+    h('p',{},'点击选择 HTML 文件，或拖拽文件到这里'),
+    h('p',{style:'fontSize:".8rem";opacity:".7"',},'也支持粘贴 HTML 源码'),
+    h('button',{className:'btn btn-outline btn-sm',onClick:(e)=>{e.stopPropagation();togglePaste();},style:'margin-top:8px'},'📋 粘贴源码'),
+    h('input',{type:'file',id:'fileInput',accept:'.html,.htm',style:'display:none',onChange:handleFileSelect})
+  ].filter(Boolean));
+
+  // Drag and drop
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();zone.classList.remove('dragover');
+    const f=e.dataTransfer.files[0];
+    if(f) processFile(f);
+  });
+
+  const pasteArea = h('div',{className:'paste-area',id:'pasteArea'}, ...[
+    h('textarea',{id:'pasteTextarea',placeholder:'在这里粘贴 HTML 源码...'}),
+    h('button',{className:'btn btn-primary btn-sm',onClick:processPaste,style:'margin-top:8px'},'解析并导入')
+  ].filter(Boolean));
+
+  return h('div',{},zone,pasteArea);
+}
+
+function togglePaste(){
+  document.getElementById('pasteArea').classList.toggle('show');
+}
+
+function handleFileSelect(e){
+  const f=e.target.files[0];
+  if(f) processFile(f);
+}
+
+function processFile(file){
+  const reader=new FileReader();
+  reader.onload=function(){
+    parseAndPreview(reader.result);
+  };
+  reader.readAsText(file);
+}
+
+function processPaste(){
+  const html=document.getElementById('pasteTextarea').value.trim();
+  if(!html){alert('请先粘贴 HTML 内容');return;}
+  parseAndPreview(html);
+}
+
+let previewData=null;
+function parseAndPreview(htmlString){
+  const parser=new DOMParser();
+  const doc=parser.parseFromString(htmlString,'text/html');
+  const title=doc.querySelector('.practice-vocabulary__title')?.textContent?.trim()||'未命名词库';
+  const words=[];
+  const wordEls=doc.querySelectorAll('.practice-vocabulary__word');
+  wordEls.forEach(el=>{
+    const item=el.closest('.practice-vocabulary__item');
+    if(!item) return;
+    words.push({
+      word:el.textContent.trim(),
+      phonetic:'',
+      zh:item.querySelector('.practice-vocabulary__meaning-zh')?.textContent?.trim()||'',
+      en:item.querySelector('.practice-vocabulary__meaning-en')?.textContent?.trim()||'',
+      example:item.querySelector('.practice-vocabulary__meaning-example')?.textContent?.trim()||'',
+      status:'unknown'
+    });
+  });
+
+  // Also try to extract phonetic
+  const phoneticEls=doc.querySelectorAll('.practice-vocabulary__phonetic-text');
+  phoneticEls.forEach((el,i)=>{
+    if(words[i]) words[i].phonetic=el.textContent.trim();
+  });
+
+  if(words.length===0){
+    alert('未能从该文件中识别出单词。请确认文件格式与「基础练习.html」一致。');
+    return;
+  }
+
+  previewData={title,words};
+  currentView='import-preview';
+  render();
+}
+
+function renderImportPreview(){
+  if(!previewData) {currentView='decks';render();return;}
+  const {title,words}=previewData;
+  return h('div',{className:'card'}, ...[
+    h('h2',{},'📥 导入预览'),
+    h('p',{style:'margin-bottom:8px;color:var(--text2)'},'识别到词库: '+title),
+    h('p',{style:'margin-bottom:16px;color:var(--text2)'},'共 '+words.length+' 个单词'),
+    h('div',{className:'table-wrap',style:'max-height:300px;overflow-y:auto;margin-bottom:16px'},
+      h('table',{}, ...[
+        h('thead',{},h('tr',{},h('th',{},'单词'),h('th',{},'中文释义'))),
+        h('tbody',{},...words.slice(0,50).map(w=>h('tr',{},h('td',{className:'word-col'},w.word),h('td',{className:'zh-col'},w.zh))))
+      ].filter(Boolean))
+    ),
+    words.length>50?h('p',{style:'fontSize:".85rem";color:var(--text2);marginBottom:"12px"'},'...还有 '+(words.length-50)+' 个单词'):null,
+    h('div',{className:'btn-row',style:'display:flex;gap:8px'}, ...[
+      h('button',{className:'btn btn-outline',onClick:()=>{previewData=null;currentView='decks';render();}},'取消'),
+      h('button',{className:'btn btn-primary',onClick:confirmImport},'确认导入 ('+words.length+' 词)')
+    ].filter(Boolean))
+  ].filter(Boolean));
+}
+
+function confirmImport(){
+  if(!previewData) return;
+  decks=loadDecks();
+  const id='deck-'+Date.now();
+  decks[id]={
+    id, title:previewData.title, createdAt:Date.now(),
+    words:previewData.words
+  };
+  saveDecks(decks);
+  previewData=null;
+  currentView='decks';
+  render();
+}
+
+// ===================== REVIEW (筛查) =====================
+function startReview(deckId){
+  activeDeckId=deckId;
+  decks=loadDecks();
+  const d=getDeck();
+  if(!d) return;
+  reviewWords=d.words.filter(w=>w.status==='unknown');
+  if(reviewWords.length===0){
+    alert('这个词库中所有单词都已标记为"认识"！');
+    return;
+  }
+  reviewIndex=0;
+  currentView='review';
+  render();
+}
+
+function resetReview(){
+  const d=getDeck();
+  if(!d) return;
+  reviewWords=d.words.filter(w=>w.status==='unknown');
+  reviewIndex=0;
+}
+
+function renderReview(){
+  if(reviewIndex>=reviewWords.length){
+    return renderReviewDone();
+  }
+  const w=reviewWords[reviewIndex];
+  const total=reviewWords.length;
+  const done=reviewIndex;
+  const pct=Math.round(done/total*100);
+
+  return h('div',{}, ...[
+    h('div',{className:'review-card'}, ...[
+      h('div',{className:'big-word'},w.word),
+      h('div',{className:'phonetic'},w.phonetic||''),
+      h('div',{className:'review-actions'}, ...[
+        h('button',{className:'btn btn-dunno',onClick:()=>reviewAnswer(false)},'❌ 不认识'),
+        h('button',{className:'btn btn-know',onClick:()=>reviewAnswer(true)},'✅ 认识')
+      ].filter(Boolean)),
+      h('div',{className:'review-progress'}, ...[
+        h('div',{className:'progress-wrap'}, ...[
+          h('span',{},'筛查进度'),
+          h('div',{className:'progress-bar'},h('div',{className:'progress-fill',style:'width:'+pct+'%'})),
+          h('span',{},done+'/'+total)
+        ].filter(Boolean))
+      ].filter(Boolean)),
+    ].filter(Boolean)),
+    h('div',{className:'shortcuts'},'⌨ 按 1=认识  2=不认识  ← 返回上一个'),
+    h('div',{style:'textAlign:"center";marginTop:"8px"'},h('button',{className:'btn btn-outline btn-sm',onClick:finishReview},'结束筛查'))
+  ].filter(Boolean));
+}
+
+function reviewAnswer(known){
+  const w=reviewWords[reviewIndex];
+  w.status=known?'known':'unknown';
+  reviewIndex++;
+  save();
+  render();
+}
+
+function finishReview(){
+  const remaining = reviewWords.slice(reviewIndex);
+  for(const w of remaining) w.status='unknown';
+  save();
+  currentView='decks';
+  render();
+}
+
+function renderReviewDone(){
+  const d=getDeck();
+  const known=d.words.filter(w=>w.status==='known').length;
+  const total=d.words.length;
+  const pct=Math.round(known/total*100);
+  const fresh = d.words.filter(w=>w.status==='unknown').length;
+
+  return h('div',{className:'card',style:'textAlign:"center"'}, ...[
+    h('div',{style:'fontSize:"3rem";marginBottom:"8px"'},'🎉'),
+    h('h2',{},'筛查完成！'),
+    h('p',{style:'marginBottom:"4px"'},'✅ 认识: '+known+' 个'),
+    h('p',{style:'marginBottom:"4px"'},'📖 生词: '+fresh+' 个'),
+    h('p',{style:'marginBottom:"16px"',className:'progress-pill'},'掌握率 '+pct+'%'),
+    h('div',{style:'display:"flex";gap:"10px";justifyContent:"center"'}, ...[
+      h('button',{className:'btn btn-outline',onClick:()=>{currentView='decks';render();}},'返回词库'),
+      h('button',{className:'btn btn-primary',onClick:()=>{startStudy(activeDeckId);}},'开始背生词 ('+fresh+' 词)'),
+    ].filter(Boolean))
+  ].filter(Boolean));
+}
+
+// ===================== STUDY (背生词) =====================
+function startStudy(deckId){
+  activeDeckId=deckId;
+  decks=loadDecks();
+  const d=getDeck();
+  if(!d) return;
+  studyWords=d.words.filter(w=>w.status==='unknown');
+  if(studyWords.length===0){
+    alert('没有生词了！所有单词都已掌握 🎉');
+    return;
+  }
+  studyIndex=0;
+  studyMode='flashcard';
+  currentView='study';
+  render();
+}
+
+function resetStudy(){
+  const d=getDeck();
+  if(!d) return;
+  studyWords=d.words.filter(w=>w.status==='unknown');
+  studyIndex=0;
+  cardFlipped=false;
+  quizWords=[]; quizIdx=0; quizCorrect=0; quizAnswered=false;
+}
+
+function renderStudy(){
+  if(studyWords.length===0){
+    const d=getDeck();
+    const known=d.words.filter(w=>w.status==='known').length;
+    return h('div',{className:'card',style:'textAlign:"center"'}, ...[
+      h('div',{style:'fontSize:"3rem"'},'🏆'),
+      h('h2',{},'全部掌握！'),
+      h('p',{},'这个词库的 '+d.words.length+' 个单词中，你已掌握 '+known+' 个'),
+      h('button',{className:'btn btn-primary',onClick:()=>{currentView='decks';render();},style:'marginTop:"12px"'},'返回词库')
+    ].filter(Boolean));
+  }
+  const tabs=h('div',{className:'tabs',style:'marginBottom:"16px"',id:'studyTabs'}, ...[
+    h('button',{className:'tab'+(studyMode==='flashcard'?' active':''),onClick:()=>{studyMode='flashcard';render();}},'🎴 卡片'),
+    h('button',{className:'tab'+(studyMode==='quiz'?' active':''),onClick:()=>{studyMode='quiz';initQuiz();render();}},'✅ 测验'),
+    h('button',{className:'tab'+(studyMode==='list'?' active':''),onClick:()=>{studyMode='list';render();}},'📋 列表'),
+  ].filter(Boolean));
+
+  const known = getDeck().words.filter(w=>w.status==='known').length;
+  const total = getDeck().words.length;
+  const pct = Math.round(known/total*100);
+
+  const stats=h('div',{className:'progress-wrap',style:'marginBottom:"16px"'}, ...[
+    h('span',{},'掌握 '+known+'/'+total),
+    h('div',{className:'progress-bar'},h('div',{className:'progress-fill',style:'width:'+pct+'%'})),
+    h('span',{},'生词 '+studyWords.length+' 个')
+  ].filter(Boolean));
+
+  let content;
+  switch(studyMode){
+    case 'flashcard': content=renderFlashcard(); break;
+    case 'quiz': content=renderQuiz(); break;
+    case 'list': content=renderStudyList(); break;
+  }
+  return h('div',{},tabs,stats,content);
+}
+
+// ===== STUDY: FLASHCARD =====
+function renderFlashcard(){
+  if(studyIndex>=studyWords.length) studyIndex=0;
+  const w=studyWords[studyIndex];
+  cardFlipped=false;
+
+  const fc=h('div',{className:'flashcard-wrap',onClick:()=>flipFC()},h('div',{className:'flashcard',id:'flashcardEl'}, ...[
+    h('div',{className:'fc-face fc-front'}, ...[
+      h('div',{className:'fc-word'},w.word),
+      h('div',{className:'fc-phonetic'},w.phonetic||''),
+      h('div',{className:'fc-hint'},'👆 点击或按空格翻转')
+    ].filter(Boolean)),
+    h('div',{className:'fc-face fc-back'}, ...[
+      h('div',{className:'fc-zh'},w.zh),
+      h('div',{className:'fc-en'},w.en),
+      w.example?h('div',{className:'fc-example'},'📝 '+w.example):null
+    ].filter(Boolean))
+  ].filter(Boolean)));
+
+  return h('div',{}, ...[
+    fc,
+    h('div',{className:'fc-nav'}, ...[
+      h('button',{className:'fc-nav-btn',onClick:(e)=>{e.stopPropagation();studyIndex=(studyIndex-1+studyWords.length)%studyWords.length;render();}},'◀'),
+      h('span',{className:'fc-counter'},(studyIndex+1)+'/'+studyWords.length),
+      h('button',{className:'fc-nav-btn',onClick:(e)=>{e.stopPropagation();studyIndex=(studyIndex+1)%studyWords.length;render();}},'▶'),
+    ].filter(Boolean)),
+    h('div',{className:'fc-actions'}, ...[
+      h('button',{className:'btn btn-outline btn-sm btn-know',onClick:()=>markStudyWord(true)},'✅ 已掌握'),
+      h('button',{className:'btn btn-outline btn-sm',onClick:()=>resetAllStudy(),style:'color:var(--orange);borderColor:var(--orange)'},'🔄 全部重学')
+    ].filter(Boolean)),
+    h('div',{className:'shortcuts'},'⌨ 空格翻卡  ←→ 切换  1=已掌握')
+  ].filter(Boolean));
+}
+
+function flipFC(){
+  cardFlipped=!cardFlipped;
+  const el=document.getElementById('flashcardEl');
+  if(el) el.classList.toggle('flipped',cardFlipped);
+}
+
+function markStudyWord(known){
+  if(known) studyWords[studyIndex].status='known';
+  const cur=studyWords[studyIndex];
+  studyWords.splice(studyIndex,1);
+  if(studyIndex>=studyWords.length) studyIndex=0;
+  save();
+  if(studyWords.length===0) render();
+  else {cardFlipped=false;render();}
+}
+
+function resetAllStudy(){
+  if(!confirm('确定将这个词库的所有单词重置为"不认识"吗？')) return;
+  const d=getDeck();
+  d.words.forEach(w=>w.status='unknown');
+  save();
+  studyWords=d.words.filter(w=>w.status==='unknown');
+  studyIndex=0;
+  render();
+}
+
+// ===== STUDY: QUIZ =====
+function initQuiz(){
+  quizWords=[...studyWords].sort(()=>Math.random()-.5).slice(0,Math.min(20,studyWords.length));
+  quizIdx=0; quizCorrect=0; quizAnswered=false; quizCur=null; quizOpts=[];
+}
+
+function renderQuiz(){
+  if(quizWords.length===0) initQuiz();
+  if(quizIdx>=quizWords.length) return renderQuizDone();
+
+  quizAnswered=false;
+  quizCur=quizWords[quizIdx];
+  const correct=quizCur.zh;
+  const deckAll=getDeck().words.filter(w=>w.word!==quizCur.word);
+  const distractors=deckAll.sort(()=>Math.random()-.5).slice(0,3).map(w=>w.zh);
+  quizOpts=[...distractors,correct].sort(()=>Math.random()-.5);
+
+  return h('div',{className:'quiz-wrap'}, ...[
+    h('div',{style:'textAlign:"center";color:"var(--text2)";fontSize:".85rem";marginBottom:"8px"'},'第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect),
+    h('div',{className:'quiz-q-word'},quizCur.word),
+    h('div',{className:'quiz-q-phonetic'},quizCur.phonetic||''),
+    h('div',{className:'quiz-opts'},...quizOpts.map((opt,i)=>
+      h('button',{className:'quiz-opt',onClick:()=>quizAnswer(i)},String.fromCharCode(65+i)+'. '+opt)
+    )),
+    h('div',{className:'quiz-fb',id:'quizFeedback'}),
+    h('button',{className:'btn btn-primary',id:'quizNext',style:'display:none;margin:12px auto 0',onClick:nextQuiz},'下一题 ▶')
+  ].filter(Boolean));
+}
+
+function quizAnswer(idx){
+  if(quizAnswered) return;
+  quizAnswered=true;
+  const correctZh=quizCur.zh;
+  const isCorrect=quizOpts[idx]===correctZh;
+  if(isCorrect) {quizCorrect++;quizCur.status='known';}
+
+  document.querySelectorAll('.quiz-opt').forEach((opt,i)=>{
+    opt.style.pointerEvents='none';
+    if(quizOpts[i]===correctZh) opt.classList.add('correct');
+    else if(i===idx && !isCorrect) opt.classList.add('wrong');
+  });
+
+  const fb=document.getElementById('quizFeedback');
+  fb.textContent=isCorrect?'✅ 正确！':'❌ 错误！正确答案是: '+correctZh;
+  fb.style.color=isCorrect?'var(--green)':'var(--red)';
+  document.getElementById('quizNext').style.display='';
+  save();
+}
+
+function nextQuiz(){quizIdx++;render();}
+
+function renderQuizDone(){
+  const pct=quizWords.length>0?Math.round(quizCorrect/quizWords.length*100):0;
+  let emoji=pct>=90?'🎉':pct>=70?'👍':pct>=50?'📖':'💪';
+  studyWords=getDeck().words.filter(w=>w.status==='unknown');
+  return h('div',{className:'card',style:'textAlign:"center"'}, ...[
+    h('div',{style:'fontSize:"3rem"'},emoji),
+    h('h2',{},'测验完成！'),
+    h('p',{className:'quiz-score'},'正确 '+quizCorrect+' / '+quizWords.length+'（'+pct+'%）'),
+    h('div',{style:'display:"flex";gap:"8px";justifyContent:"center";marginTop:"12px";flexWrap:"wrap"'}, ...[
+      h('button',{className:'btn btn-primary',onClick:()=>{studyMode='flashcard';render();}},'回到卡片'),
+      h('button',{className:'btn btn-outline',onClick:()=>{initQuiz();render();}},'🔄 再来一轮'),
+    ].filter(Boolean))
+  ].filter(Boolean));
+}
+
+// ===== STUDY: LIST =====
+let studyListFilter='';
+function renderStudyList(){
+  let list=studyWords;
+  if(studyListFilter){
+    const q=studyListFilter.toLowerCase();
+    list=list.filter(w=>w.word.includes(q)||w.zh.includes(q)||w.en.includes(q));
+  }
+  return h('div',{}, ...[
+    h('input',{className:'search-box',placeholder:'🔍 搜索生词...',value:studyListFilter,onInput:(e)=>{studyListFilter=e.target.value;render();}}),
+    h('p',{style:'fontSize:".85rem";color:"var(--text2)";marginBottom:"8px"'},'生词: '+list.length+' / '+studyWords.length),
+    h('div',{className:'table-wrap'},
+      h('table',{}, ...[
+        h('thead',{},h('tr',{},h('th',{},'单词'),h('th',{},'音标'),h('th',{},'中文释义'),h('th',{},'操作'))),
+        h('tbody',{},...list.map(w=>h('tr',{}, ...[
+          h('td',{className:'word-col'},w.word),
+          h('td',{style:'color:var(--text2);fontSize:".82rem"'},w.phonetic||''),
+          h('td',{className:'zh-col'},w.zh),
+          h('td',{},h('button',{className:'btn btn-sm btn-know',style:'padding:"4px 12px";fontSize:".75rem"',onClick:()=>{w.status='known';save();resetStudy();render();}},'✅ 掌握'))
+        ].filter(Boolean))))
+      ].filter(Boolean))
+    )
+  ].filter(Boolean));
+}
+
+// ===================== KEYBOARD =====================
+document.addEventListener('keydown',e=>{
+  if(currentView==='review'){
+    if(e.key==='1'){e.preventDefault();reviewAnswer(true);}
+    else if(e.key==='2'){e.preventDefault();reviewAnswer(false);}
+    else if(e.key==='ArrowLeft'&&reviewIndex>0){e.preventDefault();reviewIndex--;render();}
+  }
+  if(currentView==='study'&&studyMode==='flashcard'){
+    if((e.key===' '||e.code==='Space')&&studyWords.length>0){e.preventDefault();flipFC();}
+    else if(e.key==='ArrowLeft'){e.preventDefault();studyIndex=(studyIndex-1+studyWords.length)%studyWords.length;render();}
+    else if(e.key==='ArrowRight'){e.preventDefault();studyIndex=(studyIndex+1)%studyWords.length;render();}
+    else if(e.key==='1'){e.preventDefault();markStudyWord(true);}
+  }
+  if(currentView==='study'&&studyMode==='quiz'&&!quizAnswered&&quizCur){
+    if(e.key==='a'||e.key==='A') quizAnswer(0);
+    if(e.key==='b'||e.key==='B') quizAnswer(1);
+    if(e.key==='c'||e.key==='C') quizAnswer(2);
+    if(e.key==='d'||e.key==='D') quizAnswer(3);
+  }
+  if(currentView==='study'&&studyMode==='quiz'&&quizAnswered&&e.key==='Enter') nextQuiz();
+});
+
+// ===================== INIT =====================
+ensurePreset();
+render();
+</script>
+</body>
+</html>
