@@ -131,6 +131,10 @@ tr:last-child td{border-bottom:none;}
 .speak-btn.speaking{background:var(--accent);color:#fff;border-color:var(--accent);animation:pulse .8s infinite;}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
+.auto-speak-btn{padding:5px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:.78rem;color:var(--text2);transition:.2s;white-space:nowrap;}
+.auto-speak-btn:hover{border-color:var(--accent);}
+.auto-speak-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
 .spell-wrap{max-width:500px;margin:0 auto;text-align:center;}
 .spell-zh{font-size:1.4rem;font-weight:600;margin-bottom:6px;line-height:1.5;}
 .spell-en-hint{font-size:.9rem;color:var(--text2);margin-bottom:20px;font-style:italic;}
@@ -241,6 +245,8 @@ function loadDecks(){ try{return JSON.parse(localStorage.getItem(LS_DECKS))||{};
 function saveDecks(d){localStorage.setItem(LS_DECKS,JSON.stringify(d));}
 function loadSettings(){ try{return JSON.parse(localStorage.getItem(LS_SETTINGS))||{};}catch(e){return{};} }
 function saveSettings(s){localStorage.setItem(LS_SETTINGS,JSON.stringify(s));}
+function getAutoSpeak(){ return loadSettings().autoSpeak!==false; } // default ON
+function toggleAutoSpeak(){ const s=loadSettings(); s.autoSpeak=!getAutoSpeak(); saveSettings(s); render(); }
 
 function ensurePreset(){
   const decks = loadDecks();
@@ -314,6 +320,7 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'review-done-study': startStudy(activeDeckId); break;
     // Audio
     case 'speak': e.stopPropagation(); speakWord(arg); return; // don't re-render
+    case 'toggle-auto-speak': toggleAutoSpeak(); return;
     // Export/Import
     case 'export-decks': exportDecks(); return;
     case 'import-decks': document.getElementById('jsonFileInput').click(); return;
@@ -375,6 +382,13 @@ function render(){
   if(currentView==='decks') setupImportZone();
   if(currentView==='study' && studyMode==='list') setupSearchInput();
   if(currentView==='study' && studyMode==='spell'){ setTimeout(()=>{ const inp=document.getElementById('spellInput'); if(inp) inp.focus(); }, 100); }
+
+  // Auto-speak
+  if(getAutoSpeak()){
+    if(currentView==='study' && studyMode==='flashcard' && studyWords.length>0) setTimeout(()=>speakWord(studyWords[studyIndex].word), 200);
+    if(currentView==='study' && studyMode==='quiz' && quizCur) setTimeout(()=>speakWord(quizCur.word), 200);
+    if(currentView==='review' && reviewIndex<reviewWords.length) setTimeout(()=>speakWord(reviewWords[reviewIndex].word), 200);
+  }
 }
 
 // ===================== DECKS =====================
@@ -607,12 +621,14 @@ function renderStudyHTML(){
   let h = '';
 
   // Tabs
-  h += '<div class="tabs">';
+  const autoOn = getAutoSpeak();
+  h += '<div class="tabs" style="margin-bottom:8px">';
   h += '<button class="tab'+(studyMode==='flashcard'?' active':'')+'" data-action="study-flashcard">🎴 卡片</button>';
   h += '<button class="tab'+(studyMode==='quiz'?' active':'')+'" data-action="study-quiz">✅ 测验</button>';
   h += '<button class="tab'+(studyMode==='spell'?' active':'')+'" data-action="study-spell">✏️ 拼写</button>';
   h += '<button class="tab'+(studyMode==='list'?' active':'')+'" data-action="study-list">📋 列表</button>';
   h += '</div>';
+  h += '<div style="text-align:center;margin-bottom:12px"><button class="auto-speak-btn'+(autoOn?' on':'')+'" data-action="toggle-auto-speak">'+(autoOn?'🔊 自动朗读：开':'🔇 自动朗读：关')+'</button></div>';
 
   // Stats
   h += '<div class="progress-wrap" style="margin-bottom:16px">';
