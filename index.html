@@ -243,10 +243,19 @@ const LS_DECKS = 'vt_decks';
 const LS_SETTINGS = 'vt_settings';
 function loadDecks(){ try{return JSON.parse(localStorage.getItem(LS_DECKS))||{};}catch(e){return{};} }
 function saveDecks(d){localStorage.setItem(LS_DECKS,JSON.stringify(d));}
-function loadSettings(){ try{return JSON.parse(localStorage.getItem(LS_SETTINGS))||{};}catch(e){return{};} }
+function loadSettings(){
+  try{
+    const s = JSON.parse(localStorage.getItem(LS_SETTINGS))||{};
+    if(s.theme===undefined && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+      s.theme = 'dark';
+    }
+    return s;
+  }catch(e){return{};}
+}
 function saveSettings(s){localStorage.setItem(LS_SETTINGS,JSON.stringify(s));}
 function getAutoSpeak(){ return loadSettings().autoSpeak!==false; } // default ON
 function toggleAutoSpeak(){ const s=loadSettings(); s.autoSpeak=!getAutoSpeak(); saveSettings(s); render(); }
+function toggleTheme(){ const s=loadSettings(); s.theme=s.theme==='dark'?'light':'dark'; s.themeManuallySet=true; saveSettings(s); render(); }
 
 function ensurePreset(){
   const decks = loadDecks();
@@ -355,7 +364,7 @@ function render(){
   html += '<h1>📚 VocabTrainer</h1>';
   html += '<div class="header-right">';
   if(currentView!=='decks') html += '<button class="btn btn-outline btn-sm" data-action="go-decks">🏠 词库</button>';
-  html += '<button class="theme-btn" data-action="toggle-theme">'+(isDark?'☀️':'🌙')+'</button>';
+  html += '<button class="btn btn-outline btn-sm" data-action="toggle-theme" style="gap:4px">'+(isDark?'☀️ 日间':'🌙 夜间')+'</button>';
   html += '</div></div>';
 
   // Breadcrumb
@@ -960,6 +969,18 @@ jsonInput.addEventListener('change', function(e){
   reader.readAsText(f);
   this.value = '';
 });
+
+// Follow system theme changes (only if user hasn't manually set preference)
+if(window.matchMedia){
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
+    const s = loadSettings();
+    if(!s.themeManuallySet){
+      s.theme = e.matches?'dark':'light';
+      saveSettings(s);
+      render();
+    }
+  });
+}
 
 // ===================== INIT =====================
 ensurePreset();
