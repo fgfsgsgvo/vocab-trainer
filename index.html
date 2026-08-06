@@ -392,11 +392,11 @@ function render(){
   if(currentView==='study' && studyMode==='list') setupSearchInput();
   if(currentView==='study' && studyMode==='spell'){ setTimeout(()=>{ const inp=document.getElementById('spellInput'); if(inp) inp.focus(); }, 100); }
 
-  // Auto-speak
+  // Auto-speak (immediate, no delay)
   if(getAutoSpeak()){
-    if(currentView==='study' && studyMode==='flashcard' && studyWords.length>0) setTimeout(()=>speakWord(studyWords[studyIndex].word), 200);
-    if(currentView==='study' && studyMode==='quiz' && quizCur) setTimeout(()=>speakWord(quizCur.word), 200);
-    if(currentView==='review' && reviewIndex<reviewWords.length) setTimeout(()=>speakWord(reviewWords[reviewIndex].word), 200);
+    if(currentView==='study' && studyMode==='flashcard' && studyWords.length>0) speakWord(studyWords[studyIndex].word);
+    if(currentView==='study' && studyMode==='quiz' && quizCur) speakWord(quizCur.word);
+    if(currentView==='review' && reviewIndex<reviewWords.length) speakWord(reviewWords[reviewIndex].word);
   }
 }
 
@@ -896,19 +896,27 @@ document.addEventListener('keydown', function(e){
 });
 
 // ===================== AUDIO =====================
+let cachedVoices = [];
+
+function loadVoices(){
+  cachedVoices = speechSynthesis.getVoices();
+  if(cachedVoices.length===0){
+    // Chrome lazy-loads voices; wait for them
+    speechSynthesis.addEventListener('voiceschanged', ()=>{
+      cachedVoices = speechSynthesis.getVoices();
+    }, {once:true});
+  }
+}
+
 function speakWord(word){
-  if(!('speechSynthesis' in window)){ alert('你的浏览器不支持语音朗读。'); return; }
+  if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(word);
   u.lang = 'en-US';
   u.rate = 0.85;
-
-  // Find an English voice
-  const voices = speechSynthesis.getVoices();
-  const enVoice = voices.find(v=>v.lang.startsWith('en')) || voices.find(v=>v.lang.startsWith('en-US'));
+  const enVoice = cachedVoices.find(v=>v.lang.startsWith('en-US')) || cachedVoices.find(v=>v.lang.startsWith('en'));
   if(enVoice) u.voice = enVoice;
 
-  // Highlight currently speaking button
   const btns = document.querySelectorAll('.speak-btn');
   btns.forEach(b=>b.classList.remove('speaking'));
   const activeBtn = document.querySelector('[data-arg="'+CSS.escape(word)+'"]');
@@ -918,9 +926,6 @@ function speakWord(word){
   u.onerror = ()=>{ btns.forEach(b=>b.classList.remove('speaking')); };
   speechSynthesis.speak(u);
 }
-
-// Preload voices
-if('speechSynthesis' in window) speechSynthesis.getVoices();
 
 // ===================== EXPORT / IMPORT =====================
 function exportDecks(){
@@ -983,6 +988,7 @@ if(window.matchMedia){
 }
 
 // ===================== INIT =====================
+if('speechSynthesis' in window){ loadVoices(); }
 ensurePreset();
 render();
 </script>
