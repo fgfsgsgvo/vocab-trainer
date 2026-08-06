@@ -331,6 +331,7 @@ document.getElementById('app').addEventListener('click', function(e){
     // Decks
     case 'start-review': startReview(arg); updateHash(); render(); break;
     case 'start-study': startStudy(arg); updateHash(); render(); break;
+    case 'start-weak': startWeakStudy(arg); updateHash(); render(); break;
     case 'delete-deck': deleteDeck(arg); break;
     case 'show-paste': document.getElementById('pasteArea').classList.toggle('show'); break;
     case 'process-paste': processPaste(); break;
@@ -495,16 +496,18 @@ function renderDecksHTML(){
       const known = d.words.filter(w=>w.status==='known').length;
       const total = d.words.length;
       const pct = total>0?Math.round(known/total*100):0;
-      const weak = d.words.filter(w=>w.status==='unknown'&&(w.wrongCount||0)>0).length;
+      const weakWords = d.words.filter(w=>(w.wrongCount||0)>0);
+      const weak = weakWords.length;
       h += '<div class="deck-card">';
       h += '<div class="deck-info"><h3>'+esc(d.title)+'</h3>';
       h += '<div class="deck-meta"><span>'+total+' 个单词</span>';
       h += '<span class="progress-pill">✅ '+known+' / '+total+' ('+pct+'%)</span>';
       if(weak>0) h += '<span class="progress-pill" style="background:#fee2e2;color:var(--red)">💪 '+weak+' 弱点</span>';
       h += '</div></div>';
-      h += '<div class="deck-actions">';
+      h += '<div class="deck-actions" style="flex-wrap:wrap">';
       h += '<button class="btn btn-primary btn-sm" data-action="start-review" data-arg="'+esc(d.id)+'">🔍 筛查</button>';
       h += '<button class="btn btn-outline btn-sm" data-action="start-study" data-arg="'+esc(d.id)+'">📖 背生词</button>';
+      if(weak>0) h += '<button class="btn btn-outline btn-sm" data-action="start-weak" data-arg="'+esc(d.id)+'" style="border-color:var(--red);color:var(--red)">🎯 弱点专练 ('+weak+')</button>';
       h += '<button class="btn btn-outline btn-sm" data-action="delete-deck" data-arg="'+esc(d.id)+'" style="color:var(--red);border-color:var(--red)">🗑</button>';
       h += '</div></div>';
     }
@@ -699,6 +702,23 @@ function startStudy(deckId){
   updateHash();
 }
 
+// Weak-word focused study: only words with wrongCount>0, sorted by wrongCount desc
+function startWeakStudy(deckId){
+  activeDeckId = deckId;
+  decks = loadDecks();
+  const d = getDeck();
+  if(!d) return;
+  studyWords = d.words.filter(w=>(w.wrongCount||0)>0).sort((a,b)=>(b.wrongCount||0)-(a.wrongCount||0));
+  if(studyWords.length===0){ alert('没有弱点词！先去测验或拼写中答错一些单词吧。'); return; }
+  studyIndex = 0;
+  studyMode = 'flashcard';
+  cardFlipped = false;
+  quizWords=[]; quizIdx=0; quizCorrect=0; quizAnswered=false; quizWrong=[]; isWrongReview=false;
+  spellWords=[]; spellIndex=0; spellCorrect=0; spellResult=null; spellSubMode='en';
+  currentView = 'study';
+  updateHash();
+}
+
 function renderStudyHTML(){
   if(studyWords.length===0){
     const d = getDeck();
@@ -731,6 +751,7 @@ function renderStudyHTML(){
   h += '<span>掌握 '+known+'/'+total+'</span>';
   h += '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
   h += '<span>生词 '+studyWords.length+' 个</span>';
+  if(studyWords[0]&&(studyWords[0].wrongCount||0)>0) h += '<span style="font-size:.75rem;color:var(--red);white-space:nowrap">🎯 弱点专练</span>';
   h += '</div>';
 
   switch(studyMode){
