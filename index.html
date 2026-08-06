@@ -444,7 +444,12 @@ function render(){
   // Post-render setup
   if(currentView==='decks') setupImportZone();
   if(currentView==='study' && studyMode==='list') setupSearchInput();
-  if(currentView==='study' && studyMode==='spell'){ setTimeout(()=>{ const inp=document.getElementById('spellInput'); if(inp) inp.focus(); }, 100); }
+  if(currentView==='study' && studyMode==='spell'){
+    setTimeout(()=>{
+      const id = spellSubMode==='enzh'?'spellInputEn':'spellInput';
+      const inp = document.getElementById(id); if(inp) inp.focus();
+    }, 100);
+  }
 
   // Auto-speak (immediate, no delay)
   if(getAutoSpeak()){
@@ -902,6 +907,7 @@ function setupSearchInput(){
 function markStudyListWord(idx){
   if(idx>=0 && idx<studyWords.length){
     studyWords[idx].status = 'known';
+    studyWords[idx].level = Math.min(3,(studyWords[idx].level||0)+1);
     save();
     studyWords = getDeck().words.filter(w=>w.status==='unknown');
   }
@@ -957,15 +963,15 @@ function renderSpellHTML(){
     h += '<div style="text-align:center;font-size:1.1rem;color:var(--text2);margin-bottom:16px">🔊 听发音，输入英文和中文</div>';
     h += '<input class="spell-input" id="spellInputEn" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词..." style="margin-bottom:8px">';
     h += '<br>';
-    h += '<input class="dictate-zh-input" id="spellInputZh" type="text" autocomplete="off" autocorrect="off" autocomplete="off" placeholder="输入中文释义...">';
+    h += '<input class="dictate-zh-input" id="spellInputZh" type="text" autocomplete="off" autocorrect="off" placeholder="输入中文释义...">';
     h += '<div style="margin-top:12px"><button type="button" class="btn btn-primary" data-action="spell-zh-check">检查</button></div>';
     h += '<div class="spell-fb" id="spellFeedback"></div>';
     h += '<button class="btn btn-primary" id="spellNext" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
   }
   h += '</div>';
 
-  // Auto-speak for dictation
-  if(spellSubMode==='enzh') setTimeout(()=>speakWord(w.word), 400);
+  // Auto-speak for dictation — render is done, DOM is in place
+  if(spellSubMode==='enzh') setTimeout(()=>speakWord(w.word), 300);
 
   return h;
 }
@@ -978,9 +984,9 @@ function checkSpellZh(){
   const answerZh = inpZh.value.trim();
   const correctEn = spellWords[spellIndex].word;
   const correctZh = spellWords[spellIndex].zh;
-  const enOk = answerEn.toLowerCase() === correctEn.toLowerCase();
+  const enOk = answerEn.toLowerCase().replace(/\s+/g,'') === correctEn.toLowerCase().replace(/\s+/g,'');
   // For zh: do a simple substring match (loose, user might type subset of meanings)
-  const zhOk = answerZh.length>0 && (correctZh.includes(answerZh) || answerZh.includes(correctZh.split('；')[0].split('；')[0].trim()));
+  const zhOk = answerZh.length>0 && (correctZh.includes(answerZh) || answerZh.includes(correctZh.split('；')[0]));
   const isCorrect = enOk && zhOk;
   spellResult = isCorrect;
   if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level=Math.min(3,(spellWords[spellIndex].level||0)+1); save(); }
@@ -1067,10 +1073,15 @@ document.addEventListener('keydown', function(e){
     if(e.key in map){ e.preventDefault(); quizAnswer(map[e.key]); }
   }
   if(currentView==='study' && studyMode==='quiz' && quizAnswered && e.key==='Enter'){ e.preventDefault(); nextQuiz(); }
-  if(currentView==='study' && studyMode==='spell' && spellSubMode==='en' && spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpelling(); }
-  else if(currentView==='study' && studyMode==='spell' && spellSubMode==='en' && spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
-  if(currentView==='study' && studyMode==='spell' && spellSubMode==='enzh' && spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpellZh(); }
-  else if(currentView==='study' && studyMode==='spell' && spellSubMode==='enzh' && spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
+  if(currentView==='study' && studyMode==='spell'){
+    if(spellSubMode==='en'){
+      if(spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpelling(); }
+      else if(spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
+    } else if(spellSubMode==='enzh'){
+      if(spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpellZh(); }
+      else if(spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
+    }
+  }
 });
 
 // ===================== AUDIO =====================
