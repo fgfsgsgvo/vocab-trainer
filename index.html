@@ -484,16 +484,16 @@ function parseAndPreview(htmlString){
   wordEls.forEach(el=>{
     const item = el.closest('.practice-vocabulary__item');
     if(!item) return;
+    // Get only the UK phonetic (first .practice-vocabulary__phonetic-text in this item)
+    const phoneticEl = item.querySelector('.practice-vocabulary__phonetic-text');
     words.push({
-      word: el.textContent.trim(), phonetic:'',
+      word: el.textContent.trim(), phonetic: phoneticEl?phoneticEl.textContent.trim():'',
       zh: item.querySelector('.practice-vocabulary__meaning-zh')?.textContent?.trim()||'',
       en: item.querySelector('.practice-vocabulary__meaning-en')?.textContent?.trim()||'',
       example: item.querySelector('.practice-vocabulary__meaning-example')?.textContent?.trim()||'',
       status:'unknown'
     });
   });
-  const phoneticEls = doc.querySelectorAll('.practice-vocabulary__phonetic-text');
-  phoneticEls.forEach((el,i)=>{ if(words[i]) words[i].phonetic = el.textContent.trim(); });
 
   if(words.length===0){ alert('未能从该文件中识别出单词。请确认文件格式与「基础练习.html」一致。'); return; }
   previewData = {title, words};
