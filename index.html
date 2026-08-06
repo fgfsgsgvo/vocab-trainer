@@ -145,6 +145,11 @@ tr:last-child td{border-bottom:none;}
 .spell-input.wrong{border-color:var(--red)!important;background:#fee2e2!important;}
 .spell-fb{text-align:center;font-size:1rem;font-weight:600;min-height:26px;margin-top:12px;}
 
+.dictate-zh-input{padding:10px 14px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--surface);color:var(--text);font-size:.95rem;width:260px;outline:none;text-align:center;transition:.2s;margin-top:10px;}
+.dictate-zh-input:focus{border-color:var(--accent);}
+.dictate-zh-input.correct{border-color:var(--green)!important;background:#d1fae5!important;}
+.dictate-zh-input.wrong{border-color:var(--red)!important;background:#fee2e2!important;}
+
 @media(max-width:500px){
   .big-word{font-size:2rem;}
   .fc-word{font-size:1.8rem;}
@@ -304,7 +309,7 @@ let studyIndex = 0, studyWords = [], cardFlipped = false;
 let studyMode = 'flashcard';
 let quizWords=[], quizIdx=0, quizCorrect=0, quizAnswered=false, quizCur=null, quizOpts=[], quizWrong=[], isWrongReview=false;
 let previewData = null, studyListFilter = '';
-let spellWords=[], spellIndex=0, spellCorrect=0, spellResult=null;
+let spellWords=[], spellIndex=0, spellCorrect=0, spellResult=null, spellSubMode='en'; // 'en' | 'enzh'
 
 function getDeck(){ return decks[activeDeckId]; }
 function save(){ saveDecks(decks); }
@@ -367,8 +372,12 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'quiz-review-wrong': quizWords=[...quizWrong]; quizWrong=[]; quizIdx=0; quizCorrect=0; quizAnswered=false; isWrongReview=true; break;
     // Spelling
     case 'study-spell': studyMode='spell'; initSpell(); break;
-    case 'spell-check': checkSpelling(); return; // don't re-render, we update DOM directly
+    case 'spell-check': checkSpelling(); return;
     case 'spell-next': nextSpell(); break;
+    case 'spell-replay': e.stopPropagation(); speakWord(spellWords[spellIndex].word); return;
+    case 'spell-submode-en': spellSubMode='en'; break;
+    case 'spell-submode-enzh': spellSubMode='enzh'; break;
+    case 'spell-zh-check': checkSpellZh(); return;
   }
   render();
 });
@@ -680,7 +689,7 @@ function startStudy(deckId){
   studyMode = 'flashcard';
   cardFlipped = false;
   quizWords=[]; quizIdx=0; quizCorrect=0; quizAnswered=false; quizWrong=[]; isWrongReview=false;
-  spellWords=[]; spellIndex=0; spellCorrect=0; spellResult=null;
+  spellWords=[]; spellIndex=0; spellCorrect=0; spellResult=null; spellSubMode='en';
   currentView = 'study';
   updateHash();
 }
@@ -911,7 +920,7 @@ function renderSpellHTML(){
     let emoji = pct>=90?'🎉':pct>=70?'👍':pct>=50?'📖':'💪';
     studyWords = getDeck().words.filter(w=>w.status==='unknown');
     let h = '<div class="card" style="text-align:center">';
-    h += '<div style="font-size:3rem">'+emoji+'</div><h2>拼写完成！</h2>';
+    h += '<div style="font-size:3rem">'+emoji+'</div><h2>'+((spellSubMode==='enzh')?'听写':'拼写')+'完成！</h2>';
     h += '<p>正确 '+spellCorrect+' / '+spellWords.length+' （'+pct+'%）</p>';
     h += '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">';
     h += '<button class="btn btn-primary" data-action="quiz-back-card">回到卡片</button>';
@@ -922,17 +931,76 @@ function renderSpellHTML(){
   const w = spellWords[spellIndex];
   spellResult = null;
   let h = '<div class="spell-wrap">';
-  h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:12px">第 '+(spellIndex+1)+' 题 / 共 '+spellWords.length+' 题 | 正确 '+spellCorrect+'</div>';
-  h += '<div class="spell-zh">'+esc(w.zh)+'</div>';
-  if(w.en) h += '<div class="spell-en-hint">'+esc(w.en)+'</div>';
-  h += '<div class="spell-input-row">';
-  h += '<input class="spell-input" id="spellInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词...">';
-  h += '<button type="button" class="btn btn-primary" data-action="spell-check">检查</button>';
+  h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:12px">';
+  h += '第 '+(spellIndex+1)+' 题 / 共 '+spellWords.length+' 题 | 正确 '+spellCorrect;
+  h += ' &nbsp;<button class="speak-btn" data-action="spell-replay" title="再读一遍">🔊</button>';
   h += '</div>';
-  h += '<div class="spell-fb" id="spellFeedback"></div>';
-  h += '<button class="btn btn-primary" id="spellNext" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
+
+  // Sub-mode switcher
+  h += '<div class="tabs" style="margin-bottom:16px;justify-content:center">';
+  h += '<button class="tab'+(spellSubMode==='en'?' active':'')+'" data-action="spell-submode-en">✏️ 拼英文</button>';
+  h += '<button class="tab'+(spellSubMode==='enzh'?' active':'')+'" data-action="spell-submode-enzh">📝 英文+中文</button>';
   h += '</div>';
+
+  if(spellSubMode==='en'){
+    // Original: show zh meaning, type English
+    h += '<div class="spell-zh">'+esc(w.zh)+'</div>';
+    if(w.en) h += '<div class="spell-en-hint">'+esc(w.en)+'</div>';
+    h += '<div class="spell-input-row">';
+    h += '<input class="spell-input" id="spellInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词...">';
+    h += '<button type="button" class="btn btn-primary" data-action="spell-check">检查</button>';
+    h += '</div>';
+    h += '<div class="spell-fb" id="spellFeedback"></div>';
+    h += '<button class="btn btn-primary" id="spellNext" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
+  } else {
+    // Dictation: hear audio, type English + Chinese (no hints shown)
+    h += '<div style="text-align:center;font-size:1.1rem;color:var(--text2);margin-bottom:16px">🔊 听发音，输入英文和中文</div>';
+    h += '<input class="spell-input" id="spellInputEn" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词..." style="margin-bottom:8px">';
+    h += '<br>';
+    h += '<input class="dictate-zh-input" id="spellInputZh" type="text" autocomplete="off" autocorrect="off" autocomplete="off" placeholder="输入中文释义...">';
+    h += '<div style="margin-top:12px"><button type="button" class="btn btn-primary" data-action="spell-zh-check">检查</button></div>';
+    h += '<div class="spell-fb" id="spellFeedback"></div>';
+    h += '<button class="btn btn-primary" id="spellNext" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
+  }
+  h += '</div>';
+
+  // Auto-speak for dictation
+  if(spellSubMode==='enzh') setTimeout(()=>speakWord(w.word), 400);
+
   return h;
+}
+
+function checkSpellZh(){
+  const inpEn = document.getElementById('spellInputEn');
+  const inpZh = document.getElementById('spellInputZh');
+  if(!inpEn || !inpZh || spellResult!==null) return;
+  const answerEn = inpEn.value.trim();
+  const answerZh = inpZh.value.trim();
+  const correctEn = spellWords[spellIndex].word;
+  const correctZh = spellWords[spellIndex].zh;
+  const enOk = answerEn.toLowerCase() === correctEn.toLowerCase();
+  // For zh: do a simple substring match (loose, user might type subset of meanings)
+  const zhOk = answerZh.length>0 && (correctZh.includes(answerZh) || answerZh.includes(correctZh.split('；')[0].split('；')[0].trim()));
+  const isCorrect = enOk && zhOk;
+  spellResult = isCorrect;
+  if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level=Math.min(3,(spellWords[spellIndex].level||0)+1); save(); }
+  else { spellWords[spellIndex].wrongCount=(spellWords[spellIndex].wrongCount||0)+1; spellWords[spellIndex].level=Math.max(0,(spellWords[spellIndex].level||0)-1); recordStudyAction(); }
+
+  inpEn.classList.add(enOk?'correct':'wrong'); inpEn.disabled = true;
+  inpZh.classList.add(zhOk?'correct':'wrong'); inpZh.disabled = true;
+
+  const fb = document.getElementById('spellFeedback');
+  if(isCorrect){
+    fb.textContent = '✅ 全对！';
+    fb.style.color = 'var(--green)';
+  } else {
+    let msg = '❌ ';
+    if(!enOk) msg += '英文错误，正解: <b>'+esc(correctEn)+'</b> ';
+    if(!zhOk) msg += '中文错误，正解: <b>'+esc(correctZh)+'</b> ';
+    fb.innerHTML = msg;
+    fb.style.color = 'var(--red)';
+  }
+  document.getElementById('spellNext').style.display = '';
 }
 
 function checkSpelling(){
@@ -999,8 +1067,10 @@ document.addEventListener('keydown', function(e){
     if(e.key in map){ e.preventDefault(); quizAnswer(map[e.key]); }
   }
   if(currentView==='study' && studyMode==='quiz' && quizAnswered && e.key==='Enter'){ e.preventDefault(); nextQuiz(); }
-  if(currentView==='study' && studyMode==='spell' && spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpelling(); }
-  else if(currentView==='study' && studyMode==='spell' && spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
+  if(currentView==='study' && studyMode==='spell' && spellSubMode==='en' && spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpelling(); }
+  else if(currentView==='study' && studyMode==='spell' && spellSubMode==='en' && spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
+  if(currentView==='study' && studyMode==='spell' && spellSubMode==='enzh' && spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpellZh(); }
+  else if(currentView==='study' && studyMode==='spell' && spellSubMode==='enzh' && spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
 });
 
 // ===================== AUDIO =====================
