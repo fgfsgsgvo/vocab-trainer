@@ -897,20 +897,29 @@ document.addEventListener('keydown', function(e){
 
 // ===================== AUDIO =====================
 let cachedVoices = [];
+let isSpeaking = false;
 
 function loadVoices(){
   cachedVoices = speechSynthesis.getVoices();
   if(cachedVoices.length===0){
-    // Chrome lazy-loads voices; wait for them
     speechSynthesis.addEventListener('voiceschanged', ()=>{
       cachedVoices = speechSynthesis.getVoices();
     }, {once:true});
   }
 }
 
+// Warm up the speech engine — prevents first-speak lag
+function warmUpSpeech(){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance('');
+  u.volume = 0; u.rate = 2;
+  speechSynthesis.speak(u);
+}
+
 function speakWord(word){
   if(!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
+  // Don't cancel if already idle — cancel() itself causes Chrome to pause for ~200ms
+  if(isSpeaking) window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(word);
   u.lang = 'en-US';
   u.rate = 0.85;
@@ -922,8 +931,9 @@ function speakWord(word){
   const activeBtn = document.querySelector('[data-arg="'+CSS.escape(word)+'"]');
   if(activeBtn) activeBtn.classList.add('speaking');
 
-  u.onend = ()=>{ btns.forEach(b=>b.classList.remove('speaking')); };
-  u.onerror = ()=>{ btns.forEach(b=>b.classList.remove('speaking')); };
+  isSpeaking = true;
+  u.onend = ()=>{ isSpeaking=false; btns.forEach(b=>b.classList.remove('speaking')); };
+  u.onerror = ()=>{ isSpeaking=false; btns.forEach(b=>b.classList.remove('speaking')); };
   speechSynthesis.speak(u);
 }
 
@@ -988,7 +998,7 @@ if(window.matchMedia){
 }
 
 // ===================== INIT =====================
-if('speechSynthesis' in window){ loadVoices(); }
+if('speechSynthesis' in window){ loadVoices(); warmUpSpeech(); }
 ensurePreset();
 render();
 </script>
