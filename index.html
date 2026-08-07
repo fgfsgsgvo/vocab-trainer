@@ -613,7 +613,6 @@ function startReview(deckId){
   const d = getDeck();
   if(!d) return;
   reviewWords = d.words.filter(w=>w.status==='unknown');
-  if(reviewWords.length===0){ alert('这个词库中所有单词都已标记为"认识"！'); return; }
   reviewIndex = 0;
   currentView = 'review';
   updateHash();
@@ -692,7 +691,6 @@ function startStudy(deckId){
   const d = getDeck();
   if(!d) return;
   studyWords = d.words.filter(w=>w.status==='unknown');
-  if(studyWords.length===0){ alert('没有生词了！所有单词都已掌握 🎉'); return; }
   studyIndex = 0;
   studyMode = 'flashcard';
   cardFlipped = false;
@@ -709,7 +707,6 @@ function startWeakStudy(deckId){
   const d = getDeck();
   if(!d) return;
   studyWords = d.words.filter(w=>(w.wrongCount||0)>0).sort((a,b)=>(b.wrongCount||0)-(a.wrongCount||0));
-  if(studyWords.length===0){ alert('没有弱点词！先去测验或拼写中答错一些单词吧。'); return; }
   studyIndex = 0;
   studyMode = 'flashcard';
   cardFlipped = false;
@@ -726,8 +723,10 @@ function renderStudyHTML(){
     let h = '<div class="card" style="text-align:center">';
     h += '<div style="font-size:3rem">🏆</div><h2>全部掌握！</h2>';
     h += '<p>这个词库的 '+d.words.length+' 个单词中，你已掌握 '+known+' 个</p>';
-    h += '<button class="btn btn-primary" data-action="go-decks" style="margin-top:12px">返回词库</button>';
-    h += '</div>';
+    h += '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">';
+    h += '<button class="btn btn-primary" data-action="go-decks">返回词库</button>';
+    h += '<button class="btn btn-outline" data-action="fc-reset-all" style="color:var(--orange);border-color:var(--orange)">🔄 全部重学</button>';
+    h += '</div></div>';
     return h;
   }
   const known = getDeck().words.filter(w=>w.status==='known').length;
