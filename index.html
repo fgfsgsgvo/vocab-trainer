@@ -808,6 +808,17 @@ function markStudyWord(known){
   save();
 }
 
+function refreshStudyWords(){
+  const d = getDeck();
+  if(!d) return;
+  // If we came from weak study (first word has wrongCount>0), stay in weak mode
+  if(studyWords.length>0 && studyWords[0]&&(studyWords[0].wrongCount||0)>0){
+    studyWords = d.words.filter(w=>(w.wrongCount||0)>0).sort((a,b)=>(b.wrongCount||0)-(a.wrongCount||0));
+  } else {
+    studyWords = d.words.filter(w=>w.status==='unknown');
+  }
+}
+
 function resetAllStudy(){
   if(!confirm('确定将这个词库的所有单词重置为"不认识"吗？')) return;
   const d = getDeck();
@@ -834,7 +845,7 @@ function renderQuizHTML(){
   if(quizIdx >= quizWords.length){
     const pct = quizWords.length>0?Math.round(quizCorrect/quizWords.length*100):0;
     let emoji = pct>=90?'🎉':pct>=70?'👍':pct>=50?'📖':'💪';
-    studyWords = getDeck().words.filter(w=>w.status==='unknown');
+    refreshStudyWords();
     let h = '<div class="card" style="text-align:center">';
     h += '<div style="font-size:3rem">'+emoji+'</div><h2>测验完成！</h2>';
     h += '<p>正确 '+quizCorrect+' / '+quizWords.length+' （'+pct+'%）</p>';
@@ -929,7 +940,7 @@ function markStudyListWord(idx){
     studyWords[idx].status = 'known';
     studyWords[idx].level = Math.min(3,(studyWords[idx].level||0)+1);
     save();
-    studyWords = getDeck().words.filter(w=>w.status==='unknown');
+    refreshStudyWords();
   }
 }
 
@@ -944,7 +955,7 @@ function renderSpellHTML(){
   if(spellIndex >= spellWords.length){
     const pct = spellWords.length>0?Math.round(spellCorrect/spellWords.length*100):0;
     let emoji = pct>=90?'🎉':pct>=70?'👍':pct>=50?'📖':'💪';
-    studyWords = getDeck().words.filter(w=>w.status==='unknown');
+    refreshStudyWords();
     let h = '<div class="card" style="text-align:center">';
     h += '<div style="font-size:3rem">'+emoji+'</div><h2>'+((spellSubMode==='enzh')?'听写':'拼写')+'完成！</h2>';
     h += '<p>正确 '+spellCorrect+' / '+spellWords.length+' （'+pct+'%）</p>';
