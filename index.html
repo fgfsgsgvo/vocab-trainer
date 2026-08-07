@@ -397,6 +397,8 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'export-decks': exportDecks(); return;
     case 'import-decks': document.getElementById('jsonFileInput').click(); return;
     // Quiz wrong review
+    case 'quiz-review-wrong':
+      quizWords=[...quizWrong]; quizWrong=[]; quizIdx=0; quizCorrect=0; quizAnswered=false; isWrongReview=true; break;
     case 'save-goal':
       const goal = parseInt(document.getElementById('goalInput')?.value)||20;
       const gs = loadSettings(); gs.goal=goal; saveSettings(gs);
@@ -502,7 +504,7 @@ function renderDecksHTML(){
   h += '<button class="btn btn-outline btn-sm" data-action="show-paste" style="margin-top:8px">📋 粘贴 HTML / CSV / TXT 文本</button>';
   h += '</div>';
   h += '<div class="paste-area" id="pasteArea">';
-  h += '<textarea id="pasteTextarea" placeholder="在这里粘贴 HTML 源码..."></textarea>';
+  h += '<textarea id="pasteTextarea" placeholder="粘贴 HTML 源码，或 CSV 格式（每行: 单词,中文释义）..."></textarea>';
   h += '<button class="btn btn-primary btn-sm" data-action="process-paste" style="margin-top:8px">解析并导入</button>';
   h += '</div>';
 
@@ -940,7 +942,7 @@ function renderQuizHTML(){
   quizOpts = [...distractors, quizCur.zh].sort(()=>Math.random()-.5);
 
   let h = '<div class="quiz-wrap">';
-  h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:8px">第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect+' ('+Math.round(quizCorrect/Math.max(1,quizIdx)*100)+'%)</div>';
+  h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:8px">第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect+(quizIdx>0?' ('+Math.round(quizCorrect/quizIdx*100)+'%)':'')+'</div>';
   h += '<div class="quiz-q-word">'+esc(quizCur.word)+' <button class="speak-btn" data-action="speak" data-arg="'+esc(quizCur.word)+'" title="朗读">🔊</button></div>';
   h += '<div class="quiz-q-phonetic">'+esc(quizCur.phonetic||'')+'</div>';
   h += '<div class="quiz-opts">';
@@ -1119,7 +1121,7 @@ function checkSpelling(){
   // Normalize: case insensitive
   const isCorrect = answer.toLowerCase() === correct.toLowerCase();
   spellResult = isCorrect;
-  if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level = Math.min(3,(spellWords[spellIndex].level||0)+1); save(); }
+  if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level = Math.min(3,(spellWords[spellIndex].level||0)+1); save(); recordSuccess(); }
   else { spellWords[spellIndex].wrongCount=(spellWords[spellIndex].wrongCount||0)+1; spellWords[spellIndex].level = Math.max(0,(spellWords[spellIndex].level||0)-1); recordStudyAction(); }
 
   inp.classList.add(isCorrect?'correct':'wrong');
