@@ -930,16 +930,19 @@ function renderQuizHTML(){
     h += '</div></div>';
     return h;
   }
-  quizAnswered = false;
-  quizCur = quizWords[quizIdx];
-  const deckAll = getDeck().words.filter(w=>w.word!==quizCur.word);
-  const correctPOS = extractPOS(quizCur.zh);
-  // Smart distractors: prefer same POS, then random
-  const samePOS = deckAll.filter(w=>extractPOS(w.zh)===correctPOS&&correctPOS!=='');
-  const others = deckAll.filter(w=>extractPOS(w.zh)!==correctPOS||correctPOS==='');
-  const candidates = [...samePOS.sort(()=>Math.random()-.5), ...others.sort(()=>Math.random()-.5)];
-  const distractors = candidates.slice(0,3).map(w=>w.zh);
-  quizOpts = [...distractors, quizCur.zh].sort(()=>Math.random()-.5);
+  // Preserve answered state - don't allow re-randomization by re-render
+  const wasAnswered = quizAnswered;
+  if(!wasAnswered){
+    quizCur = quizWords[quizIdx];
+    const deckAll = getDeck().words.filter(w=>w.word!==quizCur.word);
+    const correctPOS = extractPOS(quizCur.zh);
+    // Smart distractors: prefer same POS, then random
+    const samePOS = deckAll.filter(w=>extractPOS(w.zh)===correctPOS&&correctPOS!=='');
+    const others = deckAll.filter(w=>extractPOS(w.zh)!==correctPOS||correctPOS==='');
+    const candidates = [...samePOS.sort(()=>Math.random()-.5), ...others.sort(()=>Math.random()-.5)];
+    const distractors = candidates.slice(0,3).map(w=>w.zh);
+    quizOpts = [...distractors, quizCur.zh].sort(()=>Math.random()-.5);
+  }
 
   let h = '<div class="quiz-wrap">';
   h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:8px">第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect+(quizIdx>0?' ('+Math.round(quizCorrect/quizIdx*100)+'%)':' (第1题)')+'</div>';
