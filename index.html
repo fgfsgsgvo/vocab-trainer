@@ -125,6 +125,15 @@ tr:last-child td{border-bottom:none;}
 .modal h3{margin-bottom:12px;}
 
 .shortcuts{text-align:center;font-size:.78rem;color:var(--text2);padding:12px 0;opacity:.7;}
+.touch-hint{text-align:center;font-size:.75rem;color:var(--text2);opacity:.6;margin-top:4px;}
+
+.chart-wrap{display:flex;gap:4px;align-items:flex-end;height:100px;margin-top:12px;}
+.chart-bar-col{display:flex;flex-direction:column;align-items:center;flex:1;gap:2px;}
+.chart-bar{background:var(--accent);border-radius:3px 3px 0 0;min-height:2px;width:100%;transition:height .3s;}
+.chart-label{font-size:.65rem;color:var(--text2);}
+
+.day-goal-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:10px 14px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border);}
+.day-goal-bar .goal-pct{font-size:.85rem;font-weight:600;color:var(--accent);}
 
 .speak-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:.85rem;transition:.2s;vertical-align:middle;margin-left:4px;}
 .speak-btn:hover{border-color:var(--accent);background:var(--accent-l);}
@@ -272,6 +281,20 @@ function recordStudyAction(){
   while(keys.length>90){ delete s[keys.shift()]; }
   saveStats(s);
 }
+function recordSuccess(){
+  recordStudyAction();
+  const s = loadSettings();
+  const today = new Date().toISOString().slice(0,10);
+  s[today+'-correct'] = (s[today+'-correct']||0)+1;
+  saveSettings(s);
+  // Check goal
+  const goal = s.goal||20;
+  if(s[today+'-correct']>=goal && s[today+'-goal-done']!==true){
+    s[today+'-goal-done'] = true;
+    saveSettings(s);
+    toast('🎉 每日目标达成！');
+  }
+}
 
 function getWeekDays(){
   const s = loadStats();
@@ -298,6 +321,10 @@ function ensurePreset(){
     decks[id] = { id, title:'雅思词汇（完整版）(List 7)', createdAt:Date.now(), words: PRESET_WORDS.map(w=>({...w,status:'unknown'})) };
     saveDecks(decks);
   }
+  // Ensure settings exist
+  const settings = loadSettings();
+  if(settings.goal===undefined) settings.goal=20;
+  saveSettings(settings);
 }
 
 // ===================== APP STATE =====================
@@ -351,7 +378,7 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'fc-flip': flipFC(); break;
     case 'fc-prev': studyIndex=(studyIndex-1+studyWords.length)%studyWords.length; cardFlipped=false; render(); break;
     case 'fc-next': studyIndex=(studyIndex+1)%studyWords.length; cardFlipped=false; render(); break;
-    case 'fc-known': markStudyWord(true); break;
+    case 'fc-known': markStudyWord(true); recordSuccess(); break;
     case 'fc-reset-all': resetAllStudy(); break;
     // Quiz
     case 'quiz-answer': quizAnswer(parseInt(arg)); return; // quizAnswer updates DOM directly
@@ -359,7 +386,7 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'quiz-retry': initQuiz(); render(); break;
     case 'quiz-back-card': studyMode='flashcard'; render(); break;
     // Study list
-    case 'sl-known': markStudyListWord(parseInt(arg)); break;
+    case 'sl-known': markStudyListWord(parseInt(arg)); recordSuccess(); break;
     // Review done
     case 'review-done-back': currentView='decks'; updateHash(); render(); break;
     case 'review-done-study': startStudy(activeDeckId); updateHash(); render(); break;
@@ -370,7 +397,10 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'export-decks': exportDecks(); return;
     case 'import-decks': document.getElementById('jsonFileInput').click(); return;
     // Quiz wrong review
-    case 'quiz-review-wrong': quizWords=[...quizWrong]; quizWrong=[]; quizIdx=0; quizCorrect=0; quizAnswered=false; isWrongReview=true; break;
+    case 'save-goal':
+      const goal = parseInt(document.getElementById('goalInput')?.value)||20;
+      const gs = loadSettings(); gs.goal=goal; saveSettings(gs);
+      toast('目标设为 '+goal+' 词/天'); return;
     // Spelling
     case 'study-spell': studyMode='spell'; initSpell(); break;
     case 'spell-check': checkSpelling(); return;
@@ -468,8 +498,8 @@ function renderDecksHTML(){
   h += '<div class="import-zone" id="importZone">';
   h += '<div class="icon">📂</div>';
   h += '<p>点击选择 HTML 文件，或拖拽文件到这里</p>';
-  h += '<p style="font-size:.8rem;opacity:.7">也支持粘贴 HTML 源码</p>';
-  h += '<button class="btn btn-outline btn-sm" data-action="show-paste" style="margin-top:8px">📋 粘贴源码</button>';
+  h += '<p style="font-size:.8rem;opacity:.7">支持 HTML / CSV（word,中文 格式）/ TXT</p>';
+  h += '<button class="btn btn-outline btn-sm" data-action="show-paste" style="margin-top:8px">📋 粘贴 HTML / CSV / TXT 文本</button>';
   h += '</div>';
   h += '<div class="paste-area" id="pasteArea">';
   h += '<textarea id="pasteTextarea" placeholder="在这里粘贴 HTML 源码..."></textarea>';
@@ -486,11 +516,30 @@ function renderDecksHTML(){
     // Quick stats
     const today = getTodayCount();
     const weekDays = getWeekDays();
+    const streak = getStreak();
+    const chart = getDayChart(7);
+    const goal = loadSettings().goal||20;
+    const goalPct = Math.min(100, Math.round(today/goal*100));
     h += '<div class="deck-card" style="border-left:3px solid var(--accent)">';
     h += '<div class="deck-info"><h3>📊 学习统计</h3>';
     h += '<div class="deck-meta">';
-    h += '<span>🔥 今日 '+(today||0)+' 次学习</span>';
+    h += '<span>🔥 连续 '+streak+' 天</span>';
     h += '<span>📅 本周 '+weekDays+'/7 天</span>';
+    h += '</div>';
+    h += '<div class="day-goal-bar">';
+    h += '<span style="font-size:.85rem">🎯 每日目标 '+today+'/'+goal+'</span>';
+    h += '<div class="progress-bar" style="flex:1;height:8px"><div class="progress-fill" style="width:'+goalPct+'%"></div></div>';
+    h += '<span class="goal-pct">'+goalPct+'%</span>';
+    h += '</div>';
+    h += '<div class="chart-wrap">';
+    const maxVal = Math.max(MAX_BAR_VAL, ...chart.map(c=>c.val), 1);
+    for(const c of chart){
+      const height = Math.max(2, (c.val/maxVal)*90);
+      h += '<div class="chart-bar-col">';
+      h += '<div class="chart-bar" style="height:'+height+'px"></div>';
+      h += '<div class="chart-label">'+c.label+'</div>';
+      h += '</div>';
+    }
     h += '</div></div></div>';
     for(const d of list){
       const known = d.words.filter(w=>w.status==='known').length;
@@ -569,7 +618,28 @@ function parseAndPreview(htmlString){
     });
   });
 
-  if(words.length===0){ alert('未能从该文件中识别出单词。请确认文件格式与「基础练习.html」一致。'); return; }
+  if(words.length===0){
+    // Also try parsing plain CSV/TSV/TXT (word,meaning format)
+    const csvMatch = htmlString.match(/([\w\-']+)\s*[,\t;]\s*(.+?)(?:\n|$)/g);
+    if(csvMatch){
+      const csvWords = csvMatch.map(line=>{
+        const parts = line.split(/[,;\t]/);
+        return {
+          word: parts[0].trim(),
+          phonetic:'', zh: parts[1]?parts[1].trim():'',
+          en:'', example:'', status:'unknown'
+        };
+      });
+      if(csvWords.length>0){
+        previewData = {title:'粘贴导入', words:csvWords};
+        currentView='import-preview';
+        render();
+        return;
+      }
+    }
+    alert('未能从该文件中识别出单词。请确认文件格式与「基础练习.html」一致，或粘贴 CSV 格式（单词,中文）。');
+    return;
+  }
   previewData = {title, words};
   currentView = 'import-preview';
   render();
@@ -791,6 +861,7 @@ function renderFlashcardHTML(){
   h += '<button class="btn btn-outline btn-sm" data-action="fc-reset-all" style="color:var(--orange);border-color:var(--orange)">🔄 全部重学</button>';
   h += '</div>';
   h += '<div class="shortcuts">⌨ 空格翻卡  ←→ 切换  1=已掌握</div>';
+  h += '<div class="touch-hint">📱 左右滑动切换单词</div>';
   return h;
 }
 
@@ -888,7 +959,7 @@ function quizAnswer(idx){
   quizAnswered = true;
   const correctZh = quizCur.zh;
   const isCorrect = quizOpts[idx] === correctZh;
-  if(isCorrect){ quizCorrect++; quizCur.status='known'; quizCur.level = Math.min(3,(quizCur.level||0)+1); }
+  if(isCorrect){ quizCorrect++; quizCur.status='known'; quizCur.level = Math.min(3,(quizCur.level||0)+1); recordSuccess(); }
   else { quizWrong.push(quizCur); quizCur.wrongCount=(quizCur.wrongCount||0)+1; quizCur.level = Math.max(0,(quizCur.level||0)-1); }
   save();
 
@@ -1020,7 +1091,7 @@ function checkSpellZh(){
   const zhOk = answerZh.length>0 && (correctZh.includes(answerZh) || answerZh.includes(correctZh.split('；')[0]));
   const isCorrect = enOk && zhOk;
   spellResult = isCorrect;
-  if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level=Math.min(3,(spellWords[spellIndex].level||0)+1); save(); }
+  if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level=Math.min(3,(spellWords[spellIndex].level||0)+1); save(); recordSuccess(); }
   else { spellWords[spellIndex].wrongCount=(spellWords[spellIndex].wrongCount||0)+1; spellWords[spellIndex].level=Math.max(0,(spellWords[spellIndex].level||0)-1); recordStudyAction(); }
 
   inpEn.classList.add(enOk?'correct':'wrong'); inpEn.disabled = true;
@@ -1216,6 +1287,65 @@ if(window.matchMedia){
     }
   });
 }
+
+// ===================== TOAST =====================
+function toast(msg, duration=2000){
+  let t = document.getElementById('vtToast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'vtToast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:24px;font-size:.85rem;font-weight:600;z-index:9999;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.15);';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  requestAnimationFrame(()=>{ t.style.opacity = '1'; });
+  setTimeout(()=>{ t.style.opacity = '0'; }, duration);
+}
+
+// ===================== STATS =====================
+function getStreak(){
+  const s = loadStats(); const now = new Date();
+  let streak=0;
+  for(let i=0;i<365;i++){
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    if(s[d.toISOString().slice(0,10)]) streak++;
+    else if(i>0) break;
+  }
+  return streak;
+}
+function getDayChart(days=7){
+  const s = loadStats();
+  const now = new Date();
+  const result=[];
+  for(let i=days-1;i>=0;i--){
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    const val = s[key]||0;
+    const label = (d.getMonth()+1)+'/'+d.getDate();
+    result.push({key, val, label});
+  }
+  return result;
+}
+const MAX_BAR_VAL = 50;
+
+// ===================== TOUCH SWIPE =====================
+let touchStartX=0, touchStartY=0;
+document.addEventListener('touchstart', function(e){
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, {passive:true});
+document.addEventListener('touchend', function(e){
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  const dy = e.changedTouches[0].screenY - touchStartY;
+  if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)*2) return;
+  if(currentView==='study' && studyMode==='flashcard' && studyWords.length>0){
+    if(dx>0){ studyIndex=(studyIndex-1+studyWords.length)%studyWords.length; cardFlipped=false; render(); }
+    else { studyIndex=(studyIndex+1)%studyWords.length; cardFlipped=false; render(); }
+  }
+  if(currentView==='review'){
+    if(dx<0 && reviewIndex>0){ reviewIndex--; render(); }
+  }
+}, {passive:true});
 
 // ===================== INIT =====================
 function updateHash(){
