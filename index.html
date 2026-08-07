@@ -479,7 +479,7 @@ function render(){
   if(currentView==='study' && studyMode==='list') setupSearchInput();
   if(currentView==='study' && studyMode==='spell'){
     setTimeout(()=>{
-      const id = spellSubMode==='enzh'?'spellInputEn':'spellInput';
+      const id = spellSubMode==='enzh'?'spellInputEn2':'spellInputEn';
       const inp = document.getElementById(id); if(inp) inp.focus();
     }, 100);
   }
@@ -942,7 +942,7 @@ function renderQuizHTML(){
   quizOpts = [...distractors, quizCur.zh].sort(()=>Math.random()-.5);
 
   let h = '<div class="quiz-wrap">';
-  h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:8px">第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect+(quizIdx>0?' ('+Math.round(quizCorrect/quizIdx*100)+'%)':'')+'</div>';
+  h += '<div style="text-align:center;color:var(--text2);font-size:.85rem;margin-bottom:8px">第 '+(quizIdx+1)+' 题 / 共 '+quizWords.length+' 题 | 正确 '+quizCorrect+(quizIdx>0?' ('+Math.round(quizCorrect/quizIdx*100)+'%)':' (第1题)')+'</div>';
   h += '<div class="quiz-q-word">'+esc(quizCur.word)+' <button class="speak-btn" data-action="speak" data-arg="'+esc(quizCur.word)+'" title="朗读">🔊</button></div>';
   h += '<div class="quiz-q-phonetic">'+esc(quizCur.phonetic||'')+'</div>';
   h += '<div class="quiz-opts">';
@@ -1057,20 +1057,20 @@ function renderSpellHTML(){
     h += '<div class="spell-zh">'+esc(w.zh)+'</div>';
     if(w.en) h += '<div class="spell-en-hint">'+esc(w.en)+'</div>';
     h += '<div class="spell-input-row">';
-    h += '<input class="spell-input" id="spellInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词...">';
+    h += '<input class="spell-input" id="spellInputEn" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词...">';
     h += '<button type="button" class="btn btn-primary" data-action="spell-check">检查</button>';
     h += '</div>';
-    h += '<div class="spell-fb" id="spellFeedback"></div>';
-    h += '<button class="btn btn-primary" id="spellNext" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
+    h += '<div class="spell-fb" id="spellFeedbackEn"></div>';
+    h += '<button class="btn btn-primary" id="spellNextEn" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
   } else {
     // Dictation: hear audio, type English + Chinese (no hints shown)
     h += '<div style="text-align:center;font-size:1.1rem;color:var(--text2);margin-bottom:16px">🔊 听发音，输入英文和中文</div>';
-    h += '<input class="spell-input" id="spellInputEn" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词..." style="margin-bottom:8px">';
+    h += '<input class="spell-input" id="spellInputEn2" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词..." style="margin-bottom:8px">';
     h += '<br>';
-    h += '<input class="dictate-zh-input" id="spellInputZh" type="text" autocomplete="off" autocorrect="off" placeholder="输入中文释义...">';
+    h += '<input class="dictate-zh-input" id="spellInputZh2" type="text" autocomplete="off" autocorrect="off" placeholder="输入中文释义...">';
     h += '<div style="margin-top:12px"><button type="button" class="btn btn-primary" data-action="spell-zh-check">检查</button></div>';
-    h += '<div class="spell-fb" id="spellFeedback"></div>';
-    h += '<button class="btn btn-primary" id="spellNext" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
+    h += '<div class="spell-fb" id="spellFeedbackEn2"></div>';
+    h += '<button class="btn btn-primary" id="spellNextEn2" data-action="spell-next" style="display:none;margin:12px auto 0">下一题 ▶</button>';
   }
   h += '</div>';
 
@@ -1081,8 +1081,8 @@ function renderSpellHTML(){
 }
 
 function checkSpellZh(){
-  const inpEn = document.getElementById('spellInputEn');
-  const inpZh = document.getElementById('spellInputZh');
+  const inpEn = document.getElementById('spellInputEn2');
+  const inpZh = document.getElementById('spellInputZh2');
   if(!inpEn || !inpZh || spellResult!==null) return;
   const answerEn = inpEn.value.trim();
   const answerZh = inpZh.value.trim();
@@ -1095,26 +1095,23 @@ function checkSpellZh(){
   spellResult = isCorrect;
   if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level=Math.min(3,(spellWords[spellIndex].level||0)+1); save(); recordSuccess(); }
   else { spellWords[spellIndex].wrongCount=(spellWords[spellIndex].wrongCount||0)+1; spellWords[spellIndex].level=Math.max(0,(spellWords[spellIndex].level||0)-1); recordStudyAction(); }
-
-  inpEn.classList.add(enOk?'correct':'wrong'); inpEn.disabled = true;
-  inpZh.classList.add(zhOk?'correct':'wrong'); inpZh.disabled = true;
-
-  const fb = document.getElementById('spellFeedback');
+  inpEn.value=''; inpZh.value='';
+  inpEn.classList.add(enOk?'correct':'wrong'); inpEn.disabled=true;
+  inpZh.classList.add(zhOk?'correct':'wrong'); inpZh.disabled=true;
+  const fb=document.getElementById('spellFeedbackEn2');
   if(isCorrect){
-    fb.textContent = '✅ 全对！';
-    fb.style.color = 'var(--green)';
+    fb.textContent='✅ 全对！'; fb.style.color='var(--green)';
   } else {
-    let msg = '❌ ';
-    if(!enOk) msg += '英文错误，正解: <b>'+esc(correctEn)+'</b> ';
-    if(!zhOk) msg += '中文错误，正解: <b>'+esc(correctZh)+'</b> ';
-    fb.innerHTML = msg;
-    fb.style.color = 'var(--red)';
+    let msg='❌ ';
+    if(!enOk) msg+='英文错误，正解: <b>'+esc(correctEn)+'</b> ';
+    if(!zhOk) msg+='中文错误，正解: <b>'+esc(correctZh)+'</b> ';
+    fb.innerHTML=msg; fb.style.color='var(--red)';
   }
-  document.getElementById('spellNext').style.display = '';
+  document.getElementById('spellNextEn2').style.display='';
 }
 
 function checkSpelling(){
-  const inp = document.getElementById('spellInput');
+  const inp = document.getElementById('spellInputEn');
   if(!inp || spellResult!==null) return;
   const answer = inp.value.trim();
   const correct = spellWords[spellIndex].word;
@@ -1124,9 +1121,10 @@ function checkSpelling(){
   if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level = Math.min(3,(spellWords[spellIndex].level||0)+1); save(); recordSuccess(); }
   else { spellWords[spellIndex].wrongCount=(spellWords[spellIndex].wrongCount||0)+1; spellWords[spellIndex].level = Math.max(0,(spellWords[spellIndex].level||0)-1); recordStudyAction(); }
 
+  inp.value='';
   inp.classList.add(isCorrect?'correct':'wrong');
   inp.disabled = true;
-  const fb = document.getElementById('spellFeedback');
+  const fb = document.getElementById('spellFeedbackEn');
   if(isCorrect){
     fb.textContent = '✅ 正确！';
     fb.style.color = 'var(--green)';
@@ -1135,7 +1133,7 @@ function checkSpelling(){
     fb.innerHTML = '❌ 错误！正确答案: <b>'+esc(correct)+'</b><br><span style="font-size:.9rem;opacity:.7">你的答案: '+diff+'</span>';
     fb.style.color = 'var(--red)';
   }
-  document.getElementById('spellNext').style.display = '';
+  document.getElementById('spellNextEn').style.display = '';
 }
 
 function diffChars(input, correct){
