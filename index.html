@@ -389,6 +389,8 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'set-quiz-size': quizSize = parseInt(arg); if(studyMode==='quiz'){ initQuiz(); } break;
     // Study list
     case 'sl-known': markStudyListWord(parseInt(arg)); recordSuccess(); break;
+    // Weak filter toggle
+    case 'toggle-weak-filter': studyWeakOnly = !studyWeakOnly; break;
     // Review done
     case 'review-done-back': currentView='decks'; updateHash(); render(); break;
     case 'review-done-study': startStudy(activeDeckId); updateHash(); render(); break;
@@ -1048,7 +1050,11 @@ function renderStudyListHTML(){
     const q = studyListFilter.toLowerCase();
     list = list.filter(w=>w.word.includes(q)||w.zh.includes(q)||w.en.includes(q));
   }
-  let h = '<input class="search-box" id="studySearch" placeholder="🔍 搜索生词..." value="'+esc(studyListFilter)+'">';
+  if(studyWeakOnly){ list = list.filter(w=>(w.wrongCount||0)>0); }
+  let h = '<div style="display:flex;gap:8px;align-items:center">';
+  h += '<input class="search-box" id="studySearch" placeholder="🔍 搜索生词..." value="'+esc(studyListFilter)+'" style="flex:1">';
+  h += '<button class="auto-speak-btn'+(studyWeakOnly?' on':'')+'" data-action="toggle-weak-filter" style="white-space:nowrap">💪 '+(studyWeakOnly?'全部词':'仅弱点')+'</button>';
+  h += '</div>';
   h += '<p style="font-size:.85rem;color:var(--text2);margin-bottom:8px">生词: '+list.length+' / '+studyWords.length+'</p>';
   h += '<div class="table-wrap"><table>';
   h += '<thead><tr><th>单词</th><th>音标</th><th>中文释义</th><th>操作</th></tr></thead><tbody>';
