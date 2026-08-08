@@ -978,7 +978,7 @@ function renderQuizHTML(){
   }
   // Preserve answered state - don't allow re-randomization by re-render
   const wasAnswered = quizAnswered;
-  if(!wasAnswered){
+  if(!wasAnswered && quizOpts.length===0){
     quizCur = quizWords[quizIdx];
     const deckAll = getDeck().words.filter(w=>w.word!==quizCur.word);
     const correctPOS = extractPOS(quizCur.zh);
