@@ -1025,6 +1025,8 @@ function quizAnswer(idx){
   fb.textContent = isCorrect?'✅ 正确！':'❌ 错误！正确答案是: '+correctZh;
   fb.style.color = isCorrect?'var(--green)':'var(--red)';
   document.getElementById('quizNext').style.display = '';
+  // Auto-speak correct word on wrong answer
+  if(!isCorrect) setTimeout(()=>speakWord(quizCur.word), 400);
 }
 
 function nextQuiz(){ quizIdx++; quizAnswered = false; render(); }
@@ -1168,7 +1170,10 @@ function checkSpelling(){
   const isCorrect = answer.toLowerCase() === correct.toLowerCase();
   spellResult = isCorrect;
   if(isCorrect){ spellCorrect++; spellWords[spellIndex].status='known'; spellWords[spellIndex].level = Math.min(3,(spellWords[spellIndex].level||0)+1); save(); recordSuccess(); }
-  else { spellWords[spellIndex].wrongCount=(spellWords[spellIndex].wrongCount||0)+1; spellWords[spellIndex].level = Math.max(0,(spellWords[spellIndex].level||0)-1); recordStudyAction(); }
+  else {
+    spellWords[spellIndex].wrongCount=(spellWords[spellIndex].wrongCount||0)+1; spellWords[spellIndex].level = Math.max(0,(spellWords[spellIndex].level||0)-1); recordStudyAction();
+    setTimeout(()=>speakWord(spellWords[spellIndex].word), 400);
+  }
 
   inp.value='';
   inp.classList.add(isCorrect?'correct':'wrong');
