@@ -588,16 +588,62 @@ function deleteDeck(id){
 }
 
 // ===================== IMPORT =====================
-function processFile(file){
-  const reader = new FileReader();
-  reader.onload = function(){ parseAndPreview(reader.result); };
-  reader.readAsText(file);
+function processPaste(){
+  const raw = document.getElementById('pasteTextarea').value.trim();
+  if(!raw){ alert('请先粘贴内容'); return; }
+  // Try CSV first, then HTML
+  if(!raw.toLowerCase().startsWith('<') && raw.includes(',')){
+    parseCSV(raw);
+  } else if(isPlainText(raw)){
+    parsePlainText(raw);
+  } else {
+    parseAndPreview(raw);
+  }
 }
 
-function processPaste(){
-  const html = document.getElementById('pasteTextarea').value.trim();
-  if(!html){ alert('请先粘贴 HTML 内容'); return; }
-  parseAndPreview(html);
+function isPlainText(str){
+  return !str.trim().startsWith('<') && !str.includes(',');
+}
+
+function parseCSV(input){
+  const lines = input.split('\n').filter(l=>l.trim());
+  const words = [];
+  for(const line of lines){
+    const parts = line.split(',');
+    if(parts.length<2) continue;
+    words.push({word:parts[0].trim(),phonetic:'',zh:parts[1].trim(),en:'',example:'',status:'unknown'});
+  }
+  if(words.length===0){ alert('未能解析 CSV 内容'); return; }
+  previewData = {title:'CSV 导入词库', words};
+  currentView = 'import-preview';
+  render();
+}
+
+function parsePlainText(input){
+  const lines = input.split('\n').filter(l=>l.trim());
+  const words = [];
+  for(const line of lines){
+    let sep = line.indexOf('\t');
+    if(sep<0) sep = line.indexOf(' ');
+    if(sep<0) continue;
+    const word = line.slice(0,sep).trim(); const zh = line.slice(sep+1).trim();
+    if(word && zh) words.push({word,phonetic:'',zh,en:'',example:'',status:'unknown'});
+  }
+  if(words.length===0){ alert('未能解析纯文本内容'); return; }
+  previewData = {title:'文本导入词库', words};
+  currentView = 'import-preview';
+  render();
+}
+
+function processFile(file){
+  const reader = new FileReader();
+  reader.onload = function(){
+    const txt = reader.result;
+    if(file.name.endsWith('.csv')){ parseCSV(txt); }
+    else if(file.name.endsWith('.txt')||file.name.endsWith('.text')){ parsePlainText(txt); }
+    else { parseAndPreview(txt); }
+  };
+  reader.readAsText(file);
 }
 
 function parseAndPreview(htmlString){
