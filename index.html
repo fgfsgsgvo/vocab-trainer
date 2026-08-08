@@ -981,7 +981,7 @@ function quizAnswer(idx){
   document.getElementById('quizNext').style.display = '';
 }
 
-function nextQuiz(){ quizIdx++; render(); }
+function nextQuiz(){ quizIdx++; quizAnswered = false; render(); }
 
 // ===== STUDY LIST =====
 function renderStudyListHTML(){
