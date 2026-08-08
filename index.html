@@ -333,6 +333,7 @@ function ensurePreset(){
 let decks = {};
 let currentView = 'decks';
 let activeDeckId = null;
+let renderBusy = false;
 let reviewIndex = 0, reviewWords = [];
 let studyIndex = 0, studyWords = [], cardFlipped = false;
 let studyMode = 'flashcard';
@@ -449,6 +450,8 @@ function levelDots(level){
 }
 
 function render(){
+  if(renderBusy) return;
+  renderBusy = true;
   const settings = loadSettings();
   const isDark = settings.theme==='dark';
   document.body.classList.toggle('dark', isDark);
@@ -498,6 +501,7 @@ function render(){
     if(currentView==='study' && studyMode==='quiz' && quizCur) speakWord(quizCur.word);
     if(currentView==='review' && reviewIndex<reviewWords.length) speakWord(reviewWords[reviewIndex].word);
   }
+  setTimeout(()=>{ renderBusy = false; }, 50);
 }
 
 // ===================== DECKS =====================
