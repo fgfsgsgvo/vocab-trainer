@@ -125,6 +125,8 @@ tr:last-child td{border-bottom:none;}
 .modal h3{margin-bottom:12px;}
 
 .shortcuts{text-align:center;font-size:.78rem;color:var(--text2);padding:12px 0;opacity:.7;}
+.shortcuts-toggle{font-size:.78rem;color:var(--accent);cursor:pointer;opacity:.5;transition:.2s;}
+.shortcuts-toggle:hover{opacity:1;}
 .touch-hint{text-align:center;font-size:.75rem;color:var(--text2);opacity:.6;margin-top:4px;}
 
 .chart-wrap{display:flex;gap:4px;align-items:flex-end;height:100px;margin-top:12px;}
@@ -391,6 +393,8 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'sl-known': markStudyListWord(parseInt(arg)); recordSuccess(); break;
     // Weak filter toggle
     case 'toggle-weak-filter': studyWeakOnly = !studyWeakOnly; break;
+    // Shortcuts toggle
+    case 'toggle-shortcuts': document.getElementById(arg).style.display='none'; return;
     // Review done
     case 'review-done-back': currentView='decks'; updateHash(); render(); break;
     case 'review-done-study': startStudy(activeDeckId); updateHash(); render(); break;
@@ -801,7 +805,7 @@ function renderReviewHTML(){
   h += '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
   h += '<span>'+done+'/'+total+'</span>';
   h += '</div></div></div>';
-  h += '<div class="shortcuts">⌨ 按 1=认识  2=不认识  3=偷看  ← 返回上一个</div>';
+  h += '<div class="shortcuts" id="shortcutsReview">⌨ 按 1=认识  2=不认识  3=偷看  ← 返回上一个 &nbsp;<span class="shortcuts-toggle" data-action="toggle-shortcuts" data-arg="shortcutsReview">收起</span></div>';
   h += '<div style="text-align:center;margin-top:8px"><button class="btn btn-outline btn-sm" data-action="finish-review">结束筛查</button></div>';
   return h;
 }
@@ -920,7 +924,7 @@ function renderFlashcardHTML(){
   h += '<button class="btn btn-outline btn-sm" data-action="fc-known" style="border-color:var(--green);color:var(--green)">✅ 已掌握</button>';
   h += '<button class="btn btn-outline btn-sm" data-action="fc-reset-all" style="color:var(--orange);border-color:var(--orange)">🔄 全部重学</button>';
   h += '</div>';
-  h += '<div class="shortcuts">⌨ 空格翻卡  ←→ 切换  1=已掌握</div>';
+  h += '<div class="shortcuts" id="shortcutsFC">⌨ 空格翻卡  ←→ 切换  1=已掌握 &nbsp;<span class="shortcuts-toggle" data-action="toggle-shortcuts" data-arg="shortcutsFC">收起</span></div>';
   h += '<div class="touch-hint">📱 左右滑动切换单词</div>';
   return h;
 }
