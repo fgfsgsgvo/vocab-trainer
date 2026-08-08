@@ -1049,6 +1049,8 @@ function quizAnswer(idx){
   if(!isCorrect) setTimeout(()=>speakWord(quizCur.word), 400);
 }
 
+function nextQuiz(){ quizIdx++; quizAnswered = false; render(); }
+
 // ===== STUDY LIST =====
 function renderStudyListHTML(){
   let list = studyWords;
