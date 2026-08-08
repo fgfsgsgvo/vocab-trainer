@@ -1055,8 +1055,8 @@ function renderStudyListHTML(){
     list = list.filter(w=>w.word.includes(q)||w.zh.includes(q)||w.en.includes(q));
   }
   if(studyWeakOnly){ list = list.filter(w=>(w.wrongCount||0)>0); }
-  let h = '<div style="display:flex;gap:8px;align-items:center">';
-  h += '<input class="search-box" id="studySearch" placeholder="🔍 搜索生词..." value="'+esc(studyListFilter)+'" style="flex:1">';
+  let h = '<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">';
+  h += '<input class="search-box" id="studySearch" placeholder="🔍 搜索生词..." value="'+esc(studyListFilter)+'" style="flex:1;margin-bottom:0">';
   h += '<button class="auto-speak-btn'+(studyWeakOnly?' on':'')+'" data-action="toggle-weak-filter" style="white-space:nowrap">💪 '+(studyWeakOnly?'全部词':'仅弱点')+'</button>';
   h += '</div>';
   h += '<p style="font-size:.85rem;color:var(--text2);margin-bottom:8px">生词: '+list.length+' / '+studyWords.length+'</p>';
