@@ -385,7 +385,7 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'fc-reset-all': resetAllStudy(); break;
     // Quiz
     case 'quiz-answer': quizAnswer(parseInt(arg)); return; // quizAnswer updates DOM directly
-    case 'quiz-next': nextQuiz(); return; // nextQuiz calls render() internally
+    case 'quiz-next': nextQuiz(); return; // nextQuiz calls render() internally via setTimeout
     case 'quiz-retry': initQuiz(); render(); break;
     case 'quiz-back-card': studyMode='flashcard'; render(); break;
     // Quiz size
@@ -1049,7 +1049,7 @@ function quizAnswer(idx){
   if(!isCorrect) setTimeout(()=>speakWord(quizCur.word), 400);
 }
 
-function nextQuiz(){ quizIdx++; quizAnswered = false; render(); }
+function nextQuiz(){ quizIdx++; quizAnswered = false; setTimeout(()=>render(), 60); }
 
 // ===== STUDY LIST =====
 function renderStudyListHTML(){
