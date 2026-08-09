@@ -385,7 +385,10 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'fc-reset-all': resetAllStudy(); break;
     // Quiz
     case 'quiz-answer': quizAnswer(parseInt(arg)); return; // quizAnswer updates DOM directly
-    case 'quiz-next': nextQuiz(); return; // nextQuiz calls render() internally via setTimeout
+    case 'quiz-next':
+      console.log('QUIZ-NEXT handler fired!');
+      nextQuiz();
+      return;
     case 'quiz-retry': initQuiz(); render(); break;
     case 'quiz-back-card': studyMode='flashcard'; render(); break;
     // Quiz size
