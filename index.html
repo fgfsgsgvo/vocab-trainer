@@ -1049,7 +1049,7 @@ function quizAnswer(idx){
   if(!isCorrect) setTimeout(()=>speakWord(quizCur.word), 400);
 }
 
-function nextQuiz(){ quizIdx++; quizAnswered = false; quizOpts = []; setTimeout(()=>render(), 60); }
+function nextQuiz(){ quizIdx++; quizAnswered = false; quizOpts = []; render(); }
 
 // ===== STUDY LIST =====
 function renderStudyListHTML(){
