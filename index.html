@@ -635,10 +635,24 @@ function parsePlainText(input){
   const lines = input.split('\n').filter(l=>l.trim());
   const words = [];
   for(const line of lines){
+    let word, zh;
+    // 优先按制表符切分
     let sep = line.indexOf('\t');
-    if(sep<0) sep = line.indexOf(' ');
-    if(sep<0) continue;
-    const word = line.slice(0,sep).trim(); const zh = line.slice(sep+1).trim();
+    if(sep>=0){
+      word = line.slice(0,sep).trim(); zh = line.slice(sep+1).trim();
+    } else {
+      // 英文短语在前、中文在最后，且英文可能含空格。
+      // 以第一个中文字符为边界切分，兼容“英文...中文”无空格的情况。
+      const m = line.search(/[一-鿿　-〿＀-￯]/);
+      if(m>=0){
+        word = line.slice(0,m).trim(); zh = line.slice(m).trim();
+      } else {
+        // 没有中文则退回按最后一个空格切分
+        sep = line.lastIndexOf(' ');
+        if(sep<0) continue;
+        word = line.slice(0,sep).trim(); zh = line.slice(sep+1).trim();
+      }
+    }
     if(word && zh) words.push({word,phonetic:'',zh,en:'',example:'',status:'unknown'});
   }
   if(words.length===0){ alert('未能解析纯文本内容'); return; }
