@@ -863,7 +863,11 @@ function renderReviewHTML(){
   h += '<span>'+done+'/'+total+'</span>';
   h += '</div></div></div>';
   h += '<div class="shortcuts" id="shortcutsReview">⌨ 按 1=认识  2=不认识  3=偷看  ← 返回上一个 &nbsp;<span class="shortcuts-toggle" data-action="toggle-shortcuts" data-arg="shortcutsReview">收起</span></div>';
-  h += '<div style="text-align:center;margin-top:8px"><button class="btn btn-outline btn-sm" data-action="finish-review">结束筛查</button></div>';
+  const autoOnR = getAutoSpeak();
+  h += '<div style="text-align:center;margin-top:8px">';
+  h += '<button class="auto-speak-btn'+(autoOnR?' on':'')+'" data-action="toggle-auto-speak">'+(autoOnR?'🔊 自动朗读：开':'🔇 自动朗读：关')+'</button>';
+  h += ' <button class="btn btn-outline btn-sm" data-action="finish-review">结束筛查</button>';
+  h += '</div>';
   return h;
 }
 
