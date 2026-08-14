@@ -882,34 +882,6 @@ function nextSpell(){
   render();
 }
 
-document.addEventListener('keydown', function(e){
-  if(currentView==='review'){
-    if(e.key==='1'){ e.preventDefault(); reviewAnswer(true); render(); }
-    else if(e.key==='2'){ e.preventDefault(); reviewAnswer(false); render(); }
-    else if(e.key==='3'){ e.preventDefault(); reviewPeek(); }
-    else if(e.key==='ArrowLeft' && reviewIndex>0){ e.preventDefault(); reviewIndex--; render(); }
-  }
-  if(currentView==='study' && (studyMode==='flashcard'||studyMode==='zh2en') && studyWords.length>0){
-    if(e.key===' ' || e.code==='Space'){ e.preventDefault(); flipFC(); }
-    else if(e.key==='ArrowLeft'){ e.preventDefault(); studyIndex=(studyIndex-1+studyWords.length)%studyWords.length; cardFlipped=false; render(); }
-    else if(e.key==='ArrowRight'){ e.preventDefault(); studyIndex=(studyIndex+1)%studyWords.length; cardFlipped=false; render(); }
-    else if(e.key==='1'){ e.preventDefault(); markStudyWord(true); render(); }
-  }
-  if(currentView==='study' && studyMode==='quiz' && !quizAnswered && quizCur){
-    const map = {'1':0,'2':1,'3':2,'4':3};
-    if(e.key in map){ e.preventDefault(); quizAnswer(map[e.key]); }
-  }
-  if(currentView==='study' && studyMode==='quiz' && quizAnswered && e.key==='Enter'){ e.preventDefault(); nextQuiz(); }
-  if(currentView==='study' && studyMode==='spell'){
-    if(spellSubMode==='en'){
-      if(spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpelling(); }
-      else if(spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
-    } else if(spellSubMode==='enzh'){
-      if(spellResult===null && e.key==='Enter'){ e.preventDefault(); checkSpellZh(); }
-      else if(spellResult!==null && e.key==='Enter'){ e.preventDefault(); nextSpell(); }
-    }
-  }
-});
 // ===================== TOAST =====================
 function toast(msg, duration=2000){
   let t = document.getElementById('vtToast');
