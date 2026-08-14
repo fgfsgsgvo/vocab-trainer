@@ -111,6 +111,7 @@ th{background:var(--accent-l);color:var(--accent);font-weight:600;white-space:no
 tr:last-child td{border-bottom:none;}
 .word-col{font-weight:700;white-space:nowrap;}
 .zh-col{line-height:1.4;}
+.pe-in{width:100%;box-sizing:border-box;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:.85rem;}
 
 .search-box{width:100%;padding:10px 14px;border-radius:20px;border:2px solid var(--border);background:var(--surface);font-size:.9rem;color:var(--text);outline:none;margin-bottom:12px;transition:.2s;}
 .search-box:focus{border-color:var(--accent);}
@@ -355,6 +356,10 @@ document.getElementById('app').addEventListener('click', function(e){
   e.stopPropagation();
 
   switch(action){
+    // Import preview editing
+    case 'pe-add-row': previewData.words.push({word:'',phonetic:'',zh:'',en:'',example:'',status:'unknown'}); render(); break;
+    case 'pe-del-row': previewData.words.splice(parseInt(arg),1); render(); break;
+    case 'pe-restore': if(previewData.originalWords) previewData.words = JSON.parse(JSON.stringify(previewData.originalWords)); render(); break;
     // Global
     case 'go-decks': currentView='decks'; activeDeckId=null; updateHash(); render(); break;
     case 'toggle-theme': toggleTheme(); break;
@@ -423,6 +428,18 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'spell-zh-check': checkSpellZh(); return;
   }
   render();
+});
+
+// Import preview: live-edit inputs write straight into previewData
+// (single source of truth → theme toggle / any re-render keeps edits)
+document.getElementById('app').addEventListener('input', function(e){
+  if(!previewData) return;
+  const t = e.target;
+  if(t.id==='peTitle'){ previewData.title = t.value; return; }
+  if(t.dataset && t.dataset.idx!==undefined && t.dataset.field){
+    const idx = +t.dataset.idx;
+    if(previewData.words[idx]) previewData.words[idx][t.dataset.field] = t.value;
+  }
 });
 
 // File input change
@@ -601,6 +618,10 @@ function deleteDeck(id){
 }
 
 // ===================== IMPORT =====================
+function setPreview(title, words){
+  previewData = {title, words, originalWords: JSON.parse(JSON.stringify(words))};
+}
+
 function processPaste(){
   const raw = document.getElementById('pasteTextarea').value.trim();
   if(!raw){ alert('请先粘贴内容'); return; }
@@ -627,7 +648,7 @@ function parseCSV(input){
     words.push({word:parts[0].trim(),phonetic:'',zh:parts[1].trim(),en:'',example:'',status:'unknown'});
   }
   if(words.length===0){ alert('未能解析 CSV 内容'); return; }
-  previewData = {title:'CSV 导入词库', words};
+  setPreview('CSV 导入词库', words);
   currentView = 'import-preview';
   render();
 }
@@ -657,7 +678,7 @@ function parsePlainText(input){
     if(word && zh) words.push({word,phonetic:'',zh,en:'',example:'',status:'unknown'});
   }
   if(words.length===0){ alert('未能解析纯文本内容'); return; }
-  previewData = {title:'文本导入词库', words};
+  setPreview('文本导入词库', words);
   currentView = 'import-preview';
   render();
 }
@@ -706,7 +727,7 @@ function parseAndPreview(htmlString){
         };
       });
       if(csvWords.length>0){
-        previewData = {title:'粘贴导入', words:csvWords};
+        setPreview('粘贴导入', csvWords);
         currentView='import-preview';
         render();
         return;
@@ -715,7 +736,7 @@ function parseAndPreview(htmlString){
     alert('未能从该文件中识别出单词。请确认文件格式与「基础练习.html」一致，或粘贴 CSV 格式（单词,中文）。');
     return;
   }
-  previewData = {title, words};
+  setPreview(title, words);
   currentView = 'import-preview';
   render();
 }
@@ -725,15 +746,23 @@ function renderImportPreviewHTML(){
   const {title, words} = previewData;
   let h = '<div class="card">';
   h += '<h2>📥 导入预览</h2>';
-  h += '<p style="color:var(--text2);margin-bottom:8px">识别到词库: '+esc(title)+'</p>';
-  h += '<p style="color:var(--text2);margin-bottom:16px">共 '+words.length+' 个单词</p>';
-  h += '<div class="table-wrap" style="max-height:300px;overflow-y:auto;margin-bottom:16px"><table>';
-  h += '<thead><tr><th>单词</th><th>中文释义</th></tr></thead><tbody>';
-  for(const w of words.slice(0,50)){
-    h += '<tr><td class="word-col">'+esc(w.word)+'</td><td class="zh-col">'+esc(w.zh)+'</td></tr>';
-  }
+  h += '<p style="color:var(--text2);margin-bottom:8px">词库名: <input id="peTitle" class="pe-in" style="max-width:260px" value="'+esc(title)+'"></p>';
+  h += '<p style="color:var(--text2);margin-bottom:12px">共 '+words.length+' 个单词 — 可直接修改内容，解析有误的话在这里修正</p>';
+  h += '<div class="table-wrap" style="max-height:420px;overflow-y:auto;margin-bottom:12px"><table>';
+  h += '<thead><tr><th style="width:36%">单词</th><th style="width:22%">音标</th><th>中文释义</th><th style="width:44px">操作</th></tr></thead><tbody>';
+  words.forEach((w,i)=>{
+    h += '<tr>';
+    h += '<td><input class="pe-in" data-idx="'+i+'" data-field="word" value="'+esc(w.word)+'"></td>';
+    h += '<td><input class="pe-in" data-idx="'+i+'" data-field="phonetic" value="'+esc(w.phonetic||'')+'"></td>';
+    h += '<td><input class="pe-in" data-idx="'+i+'" data-field="zh" value="'+esc(w.zh)+'"></td>';
+    h += '<td style="text-align:center"><button class="btn btn-sm" data-action="pe-del-row" data-arg="'+i+'" style="color:var(--red);border:1px solid var(--red);background:transparent;padding:2px 8px;font-size:.75rem;border-radius:8px" title="删除此行">🗑</button></td>';
+    h += '</tr>';
+  });
   h += '</tbody></table></div>';
-  if(words.length>50) h += '<p style="font-size:.85rem;color:var(--text2);margin-bottom:12px">...还有 '+(words.length-50)+' 个单词</p>';
+  h += '<div style="display:flex;gap:8px;margin-bottom:16px">';
+  h += '<button class="btn btn-outline btn-sm" data-action="pe-add-row">➕ 添加一行</button>';
+  h += '<button class="btn btn-outline btn-sm" data-action="pe-restore">♻️ 还原初始解析</button>';
+  h += '</div>';
   h += '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">';
   h += '<button class="btn btn-outline" data-action="cancel-import">取消</button>';
   h += '<button class="btn btn-primary" data-action="confirm-import">确认导入 ('+words.length+' 词)</button>';
@@ -743,12 +772,21 @@ function renderImportPreviewHTML(){
 
 function confirmImport(){
   if(!previewData) return;
+  let skipped = 0;
+  const words = [];
+  for(const w of previewData.words){
+    const word = (w.word||'').trim();
+    if(!word){ skipped++; continue; }
+    words.push({...w, word, zh:(w.zh||'').trim(), phonetic:(w.phonetic||'').trim()});
+  }
+  if(words.length===0){ alert('没有可导入的单词（单词列不能为空）'); return; }
   decks = loadDecks();
   const id = 'deck-'+Date.now();
-  decks[id] = { id, title:previewData.title, createdAt:Date.now(), words:previewData.words };
+  decks[id] = { id, title:(previewData.title||'').trim()||'未命名词库', createdAt:Date.now(), words };
   saveDecks(decks);
   previewData = null;
   currentView = 'decks';
+  toast('已导入 '+words.length+' 词'+(skipped>0?'（跳过 '+skipped+' 个空行）':''));
 }
 
 // ===================== REVIEW =====================
