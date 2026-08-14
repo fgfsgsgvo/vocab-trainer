@@ -375,6 +375,7 @@ document.getElementById('app').addEventListener('click', function(e){
     case 'finish-review': finishReview(); break;
     // Study tabs
     case 'study-flashcard': studyMode='flashcard'; render(); break;
+    case 'study-zh2en': studyMode='zh2en'; render(); break;
     case 'study-quiz': studyMode='quiz'; initQuiz(); render(); break;
     case 'study-list': studyMode='list'; render(); break;
     // Flashcard
@@ -883,6 +884,7 @@ function renderStudyHTML(){
   const autoOn = getAutoSpeak();
   h += '<div class="tabs" style="margin-bottom:8px">';
   h += '<button class="tab'+(studyMode==='flashcard'?' active':'')+'" data-action="study-flashcard">🎴 卡片</button>';
+  h += '<button class="tab'+(studyMode==='zh2en'?' active':'')+'" data-action="study-zh2en">🔁 中→英</button>';
   h += '<button class="tab'+(studyMode==='quiz'?' active':'')+'" data-action="study-quiz">✅ 测验</button>';
   h += '<button class="tab'+(studyMode==='spell'?' active':'')+'" data-action="study-spell">✏️ 拼写</button>';
   h += '<button class="tab'+(studyMode==='list'?' active':'')+'" data-action="study-list">📋 列表</button>';
@@ -907,6 +909,7 @@ function renderStudyHTML(){
 
   switch(studyMode){
     case 'flashcard': h += renderFlashcardHTML(); break;
+    case 'zh2en': h += renderZh2EnHTML(); break;
     case 'quiz': h += renderQuizHTML(); break;
     case 'spell': h += renderSpellHTML(); break;
     case 'list': h += renderStudyListHTML(); break;
@@ -947,10 +950,49 @@ function renderFlashcardHTML(){
   return h;
 }
 
+// ===== 中→英 (看中文背英文) =====
+function renderZh2EnHTML(){
+  if(studyIndex >= studyWords.length) studyIndex = 0;
+  const w = studyWords[studyIndex];
+  cardFlipped = false;
+  let h = '';
+  h += '<div class="flashcard-wrap" data-action="fc-flip">';
+  h += '<div class="flashcard" id="flashcardEl">';
+  h += '<div class="fc-face fc-front">';
+  h += '<div style="position:absolute;top:12px;left:16px;font-size:.7rem;color:var(--text2)">🔁 中→英</div>';
+  h += '<div class="fc-zh" style="font-size:1.6rem">'+esc(w.zh)+'</div>';
+  h += '<div class="fc-hint">💭 回想英文 → 点击/空格看答案</div>';
+  h += '</div>';
+  h += '<div class="fc-face fc-back">';
+  h += '<div class="fc-word">'+esc(w.word)+' <button class="speak-btn" data-action="speak" data-arg="'+esc(w.word)+'" title="朗读">🔊</button></div>';
+  h += '<div class="fc-phonetic">'+esc(w.phonetic||'')+'</div>';
+  h += '<div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">'+levelDots(w.level)+'</div>';
+  h += '<div class="fc-zh" style="font-size:1rem">'+esc(w.zh)+'</div>';
+  if(w.en) h += '<div class="fc-en">'+esc(w.en)+'</div>';
+  if(w.example) h += '<div class="fc-example">📝 '+esc(w.example)+'</div>';
+  h += '</div></div></div>';
+  h += '<div class="fc-nav">';
+  h += '<button class="fc-nav-btn" data-action="fc-prev">◀</button>';
+  h += '<span class="fc-counter">'+(studyIndex+1)+'/'+studyWords.length+'</span>';
+  h += '<button class="fc-nav-btn" data-action="fc-next">▶</button>';
+  h += '</div>';
+  h += '<div class="fc-actions">';
+  h += '<button class="btn btn-outline btn-sm" data-action="fc-known" style="border-color:var(--green);color:var(--green)">✅ 已掌握</button>';
+  h += '<button class="btn btn-outline btn-sm" data-action="fc-reset-all" style="color:var(--orange);border-color:var(--orange)">🔄 全部重学</button>';
+  h += '</div>';
+  h += '<div class="shortcuts" id="shortcutsFC">⌨ 空格翻卡  ←→ 切换  1=已掌握 &nbsp;<span class="shortcuts-toggle" data-action="toggle-shortcuts" data-arg="shortcutsFC">收起</span></div>';
+  h += '<div class="touch-hint">📱 左右滑动切换单词</div>';
+  return h;
+}
+
 function flipFC(){
   cardFlipped = !cardFlipped;
   const el = document.getElementById('flashcardEl');
   if(el) el.classList.toggle('flipped', cardFlipped);
+  // 中→英模式：翻开答案时自动朗读英文（只在打开自动朗读时）
+  if(studyMode==='zh2en' && cardFlipped && getAutoSpeak() && studyWords[studyIndex]){
+    speakWord(studyWords[studyIndex].word);
+  }
 }
 
 function markStudyWord(known){
@@ -1256,7 +1298,7 @@ document.addEventListener('keydown', function(e){
     else if(e.key==='3'){ e.preventDefault(); reviewPeek(); }
     else if(e.key==='ArrowLeft' && reviewIndex>0){ e.preventDefault(); reviewIndex--; render(); }
   }
-  if(currentView==='study' && studyMode==='flashcard' && studyWords.length>0){
+  if(currentView==='study' && (studyMode==='flashcard'||studyMode==='zh2en') && studyWords.length>0){
     if(e.key===' ' || e.code==='Space'){ e.preventDefault(); flipFC(); }
     else if(e.key==='ArrowLeft'){ e.preventDefault(); studyIndex=(studyIndex-1+studyWords.length)%studyWords.length; cardFlipped=false; render(); }
     else if(e.key==='ArrowRight'){ e.preventDefault(); studyIndex=(studyIndex+1)%studyWords.length; cardFlipped=false; render(); }
@@ -1430,7 +1472,7 @@ document.addEventListener('touchend', function(e){
   const dx = e.changedTouches[0].screenX - touchStartX;
   const dy = e.changedTouches[0].screenY - touchStartY;
   if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)*2) return;
-  if(currentView==='study' && studyMode==='flashcard' && studyWords.length>0){
+  if(currentView==='study' && (studyMode==='flashcard'||studyMode==='zh2en') && studyWords.length>0){
     if(dx>0){ studyIndex=(studyIndex-1+studyWords.length)%studyWords.length; cardFlipped=false; render(); }
     else { studyIndex=(studyIndex+1)%studyWords.length; cardFlipped=false; render(); }
   }
